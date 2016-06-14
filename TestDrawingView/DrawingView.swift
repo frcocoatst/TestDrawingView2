@@ -1047,6 +1047,7 @@ class DrawingView: NSView{
                 {
                     // set intermediate control point
                     arrayOfConnectionElements[selected_connector_index].controlPoint[0]  = mousePointInView;
+                    swift: Connections[selected_connector_index].controlPoint[0]
                 }
                 else
                     if (controlpoint2_selected == YES)
