@@ -17,4 +17,6 @@ struct Element
     var description:                String                  // description string
     // layout data
     var location:                   NSPoint                 // central location of the element
+    var number_connectionPoint:     Int                     // actual number of connectionpoints
+    var connectionPoints =          [NSPoint]()             // [12] array of connection points
 }
