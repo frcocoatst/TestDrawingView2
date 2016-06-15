@@ -115,14 +115,14 @@ class DrawingView: NSView{
     
     func setSelectedTool(tool:Int)
     {
-        NSLog("setSelectedTool in DrawingView with tool: %d",tool);
+        NSLog("setSelectedTool in DrawingView with tool: %d",tool)
         //   ARROW_TOOL,BUBBLE_TOOL,TERMINATOR_TOOL,STORE_TOOL,CONNECT_TOOL,DOT_TOOL,DELETE_TOOL
         selectedTool = tool
-        NSLog("selectedTool = %d",selectedTool);
+        NSLog("selectedTool = %d",selectedTool)
         
         // clear all selections
-        selected_element_index             = -1;
-        selected_connector_index           = -1;
+        selected_element_index             = -1
+        selected_connector_index           = -1
         
         // if selectedTool == ARROW_TOOL || selectedTool == CONNECT_TOOL
         if selectedTool == CONNECT_TOOL
@@ -142,9 +142,9 @@ class DrawingView: NSView{
         //var snapPoint:NSPoint
         var x:Int
         var y:Int
-        
-        x = (Int(clickPoint.x) + GRID_RADIUS/2)/GRID_RADIUS;
-        y = (Int(clickPoint.y) + GRID_RADIUS/2)/GRID_RADIUS;
+    
+        x = (Int(clickPoint.x) + GRID_RADIUS/2)/GRID_RADIUS
+        y = (Int(clickPoint.y) + GRID_RADIUS/2)/GRID_RADIUS
         
         if x==0
         {
@@ -191,7 +191,7 @@ class DrawingView: NSView{
             number_connectionPoint: 12,
             connectionPoints: cPoints))
         // increase counter
-        ElementCounter+=1;
+        ElementCounter += 1
     }
     
     /// addASquare - adds a square at a certain location
@@ -266,7 +266,7 @@ class DrawingView: NSView{
             number_connectionPoint: 12,
             connectionPoints: cPoints))
         
-        ElementCounter+=1;
+        ElementCounter += 1
     }
     
     /// addAStore - adds a store at a certain location
@@ -323,7 +323,7 @@ class DrawingView: NSView{
             number_connectionPoint: 10,
             connectionPoints: cPoints))
         
-        ElementCounter+=1;
+        ElementCounter += 1
     }
     
     /// addAInput - adds a input at a certain location
@@ -353,7 +353,7 @@ class DrawingView: NSView{
             number_connectionPoint: 6,
             connectionPoints: cPoints))
         
-        ElementCounter+=1;
+        ElementCounter += 1
     }
     
     /// addAState - adds a state at a certain location
@@ -406,7 +406,7 @@ class DrawingView: NSView{
             number_connectionPoint: 12,
             connectionPoints: cPoints))
         
-        ElementCounter+=1;
+        ElementCounter += 1
     }
     
     func drawAllElements()
@@ -418,7 +418,7 @@ class DrawingView: NSView{
         
         for (index,e) in Elements.enumerate(){
             
-            NSLog("drawAllElements: index=%d",index)
+            //NSLog("drawAllElements: index=%d",index)
             
             // ------ is it a selected element ? ------
             
@@ -526,10 +526,10 @@ class DrawingView: NSView{
                 let p3:NSPoint = NSMakePoint(rect.origin.x,                     rect.origin.y)
                 let p4:NSPoint = NSMakePoint(rect.origin.x + rect.size.width,   rect.origin.y )
                 
-                path.moveToPoint(p1);
-                path.lineToPoint(p2);
-                path.moveToPoint(p3);
-                path.lineToPoint(p4);
+                path.moveToPoint(p1)
+                path.lineToPoint(p2)
+                path.moveToPoint(p3)
+                path.lineToPoint(p4)
                 
                 path.stroke()
                 
@@ -572,8 +572,8 @@ class DrawingView: NSView{
                 //let p3:NSPoint = NSMakePoint(rect.origin.x,                     rect.origin.y)
                 let p4:NSPoint = NSMakePoint(rect.origin.x,   rect.origin.y )
                 
-                path.moveToPoint(p2);
-                path.lineToPoint(p4);
+                path.moveToPoint(p2)
+                path.lineToPoint(p4)
                 
                 path.stroke()
 
@@ -622,7 +622,7 @@ class DrawingView: NSView{
             }
             
             
-            //NSLog("number = %d",e.number);
+            //NSLog("number = %d",e.number)
         }
     }
     
@@ -727,7 +727,7 @@ class DrawingView: NSView{
             
             if NSPointInRect(point, aRect){
                 selected_element_index = index
-                NSLog("selected_element_index =%d",selected_element_index);
+                NSLog("selected_element_index =%d",selected_element_index)
                 return true
             }
        
@@ -799,13 +799,13 @@ class DrawingView: NSView{
         {
             self.deleteElement(selected_element_index)
             // set back selection
-            selected_element_index = -1;
+            selected_element_index = -1
         }
         if (selected_connector_index != -1)
         {
             self.deleteConnector(selected_connector_index)
             // set back selection
-            selected_connector_index = -1;
+            selected_connector_index = -1
         }
         // redraw
         needsDisplay = true
@@ -1048,23 +1048,23 @@ class DrawingView: NSView{
     override func mouseDown(theEvent: NSEvent) {
         super.mouseDown(theEvent)
         //
-        NSLog("mouseDown");
+        NSLog("mouseDown")
         
         var mousePointInView = theEvent.locationInWindow
         mousePointInView = convertPoint(mousePointInView, fromView: nil)
         mousePointInView.x -= frame.origin.x
         mousePointInView.y -= frame.origin.y
         
-        NSLog("with selectedTool = %d",selectedTool);
+        NSLog("with selectedTool = %d",selectedTool)
         
         switch selectedTool
         {
         case ARROW_TOOL:
-            NSLog("ARROW_TOOL");
+            NSLog("ARROW_TOOL")
             
             if self.testSelectElementInRect(mousePointInView) == true
             {
-                NSLog("element selected--> selected_element_index=%d", selected_element_index);
+                NSLog("element selected--> selected_element_index=%d", selected_element_index)
             }
             /*
             if (selected_connector_index != -1)
@@ -1106,46 +1106,46 @@ class DrawingView: NSView{
             break
             
         case BUBBLE_TOOL:
-            NSLog("BUBBLE_TOOL");
+            NSLog("BUBBLE_TOOL")
             // add bubble element to array
             self.addABubble(mousePointInView)
             
             break
             
         case TERMINATOR_TOOL:
-            NSLog("TERMINATOR_TOOL");
+            NSLog("TERMINATOR_TOOL")
             // add terminator element to array
             self.addASquare(mousePointInView)
             
             break
             
         case STORE_TOOL:
-            NSLog("STORE_TOOL");
+            NSLog("STORE_TOOL")
             // add terminator element to array
             self.addAStore(mousePointInView)
             
             break
             
         case CONNECT_TOOL:
-            NSLog("CONNECT_TOOL");
+            NSLog("CONNECT_TOOL")
             break
             
         case STATE_TOOL:
-            NSLog("STATE_TOOL");
+            NSLog("STATE_TOOL")
             // add terminator element to array
             self.addAState(mousePointInView)
             
             break
             
         case INPUT_TOOL:
-            NSLog("INPUT_TOOL");
+            NSLog("INPUT_TOOL")
             // add terminator element to array
             self.addAInput(mousePointInView)
             
             break
             
         case DELETE_TOOL:
-            NSLog("DELETE_TOOL");
+            NSLog("DELETE_TOOL")
             self.deleteElementOrConnector()
             break
             
@@ -1166,7 +1166,7 @@ class DrawingView: NSView{
         mousePointInView.y -= frame.origin.y
         //
         
-        NSLog("mouseDragged");
+        NSLog("mouseDragged")
         
         switch selectedTool
         {
@@ -1198,10 +1198,10 @@ class DrawingView: NSView{
                 // ... and store it to the selected element
                 Elements[selected_element_index].location = snapedmousePoint
             }
-            break;
+            break
             
         default:
-            break;
+            break
         }
         
         needsDisplay = true
@@ -1210,7 +1210,7 @@ class DrawingView: NSView{
     
     override func mouseUp(theEvent: NSEvent) {
         
-        NSLog("mouseUp");
+        NSLog("mouseUp")
         needsDisplay = true
     }
 }
