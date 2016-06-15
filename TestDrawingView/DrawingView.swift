@@ -35,7 +35,9 @@ let CONNECT         = 4
 let TYPE_STATE      = 5
 let TYPE_INPUT      = 6
 
-
+/// DrawingView - subclass of NSView
+///
+///
 class DrawingView: NSView{
     
     
@@ -58,16 +60,6 @@ class DrawingView: NSView{
         
     }
     
-    /*  // override func awakeFromNib()
-     {
-     var f:NSRect = self.frame
-     f.size.width = 2000
-     f.size.height = 1000
-     self.frame = f;
-     
-     }
-     */
-    
     // blow up contentsize
     override var intrinsicContentSize: NSSize {
         
@@ -81,11 +73,6 @@ class DrawingView: NSView{
     
     override func drawRect(dirtyRect: NSRect)
     {
-        // Examples are taken from:
-        
-        // let CONNRADIUS = 2.0
-        // let SELECTRADIUS = 20
-        
         NSColor.whiteColor().setFill()
         NSRectFill(self.bounds)
         //
@@ -129,6 +116,7 @@ class DrawingView: NSView{
     func setSelectedTool(tool:Int)
     {
         NSLog("setSelectedTool in DrawingView with tool: %d",tool);
+        //   ARROW_TOOL,BUBBLE_TOOL,TERMINATOR_TOOL,STORE_TOOL,CONNECT_TOOL,DOT_TOOL,DELETE_TOOL
         selectedTool = tool
         NSLog("selectedTool = %d",selectedTool);
         
@@ -136,7 +124,8 @@ class DrawingView: NSView{
         selected_element_index             = -1;
         selected_connector_index           = -1;
         
-        if selectedTool == ARROW_TOOL || selectedTool == CONNECT_TOOL
+        // if selectedTool == ARROW_TOOL || selectedTool == CONNECT_TOOL
+        if selectedTool == CONNECT_TOOL
         {
             showConnectionPoints=true
         }
@@ -145,30 +134,9 @@ class DrawingView: NSView{
             showConnectionPoints=false
         }
         needsDisplay = true
-        
-        //selectedTool = tool;
-        //   ARROW_TOOL,BUBBLE_TOOL,TERMINATOR_TOOL,STORE_TOOL,CONNECT_TOOL,DOT_TOOL,DELETE_TOOL
-        
-        /* clear all selections
-         selected_element_index             = -1;
-         selected_connector_index           = -1;
-         
-         if ((selectedTool==ARROW_TOOL) || (selectedTool==CONNECT_TOOL))
-         {
-         showConnectionPoints=YES;
-         [self setNeedsDisplay:YES];
-         }
-         else
-         {
-         showConnectionPoints=NO;
-         [self setNeedsDisplay:YES];
-         }
-         */
     }
     
-    func deleteElementOrConnector(){
-        NSLog("deleteElementOrConnector in DrawingView called");
-    }
+
     
     func snapToGrid(clickPoint:NSPoint) -> NSPoint{
         //var snapPoint:NSPoint
@@ -484,7 +452,7 @@ class DrawingView: NSView{
                 // ------ draw text into the circle ------
                 // let text: NSString = e.name + " \(e.number)"//+ e.description
                 // build a long string with linebreaks
-                let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String("\n") + e.description
+                let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
                 
                 let font = NSFont(name: "Menlo", size: 10.0)
                 
@@ -522,7 +490,7 @@ class DrawingView: NSView{
                 // ------ draw text into the square ------
                 // let text: NSString = e.name + " \(e.number)"//+ e.description
                 // build a long string with linebreaks
-                let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String("\n") + e.description
+                let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
                 
                 let font = NSFont(name: "Menlo", size: 10.0)
                 
@@ -568,7 +536,7 @@ class DrawingView: NSView{
                 // ------ draw text between the two bars ------
                 // let text: NSString = e.name + " \(e.number)"//+ e.description
                 // build a long string with linebreaks
-                let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String("\n") + e.description
+                let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
                 
                 let font = NSFont(name: "Menlo", size: 10.0)
                 
@@ -608,6 +576,11 @@ class DrawingView: NSView{
                 path.lineToPoint(p4);
                 
                 path.stroke()
+
+                // ------ draw text  ------
+                // tbd
+                // let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
+
                 
                 
             }
@@ -625,6 +598,8 @@ class DrawingView: NSView{
                 path.appendBezierPathWithOvalInRect(rect)
                 
                 path.stroke()
+                
+                
             }
             
             // ------ draw all connection points ------
@@ -814,8 +789,164 @@ class DrawingView: NSView{
         
         return false
     }
-
     
+    
+    // ------------------ delete methods ------------------
+    
+    func deleteElementOrConnector(){
+        NSLog("deleteElementOrConnector in DrawingView called")
+        if (selected_element_index != -1)
+        {
+            self.deleteElement(selected_element_index)
+            // set back selection
+            selected_element_index = -1;
+        }
+        if (selected_connector_index != -1)
+        {
+            self.deleteConnector(selected_connector_index)
+            // set back selection
+            selected_connector_index = -1;
+        }
+        // redraw
+        needsDisplay = true
+    }
+    
+    func deleteElement(element_index:Int){
+        NSLog("deleteElement element_index=%d",element_index)
+        Elements.removeAtIndex(element_index)
+        // search in Connectors for in/out connections with the actual element
+    }
+    
+    func deleteConnector(connector_index:Int){
+        NSLog("deleteConnector connector_index=%d",connector_index)
+        Connections.removeAtIndex(connector_index)
+    }
+    
+    /*
+    -(void)deleteElementOrConnector
+    {
+    if (selected_element_index != -1)
+    {
+    [self deleteElement:selected_element_index];
+    NSLog(@"deleteElement=%d", selected_element_index);
+    // set back selection
+    selected_element_index = -1;
+    }
+    if (selected_connector_index != -1)
+    {
+    [self deleteConnector: selected_connector_index ];
+    NSLog(@"deleteConnector=%d", selected_connector_index);
+    // set back selection
+    selected_connector_index = -1;
+    }
+    // update the trackingAreas
+    //[self updateTrackingAreas];
+    [self setNeedsDisplay:YES];
+    
+    }
+    
+    
+    -(void)deleteElement:(int)element_index
+    {
+    // arrayOfElementsCount
+    int i;
+    int j;
+    
+    //
+    // search for connector that were using arrayOfElements[element_index] and delete them
+    
+    j=0;
+    NSLog(@"arrayOfConnectionElementsCount:%d arrayOfConnectionElementsCount=%d",element_index,arrayOfConnectionElementsCount);
+    for (i=0;i<arrayOfConnectionElementsCount;i++)
+    {
+    if ((arrayOfConnectionElements[i].startPoint_number == element_index) ||
+    (arrayOfConnectionElements[i].endPoint_number == element_index))
+    {
+    //
+    NSLog(@"delete connection with startPoint||endPoint lineelement=%d" ,i);
+    //[self deleteConnector:i];
+    
+    }
+    else
+    {
+    arrayOfConnectionElements[j]=arrayOfConnectionElements[i];
+    NSLog(@"arrayOfConnectionElements[j=%d]:%d %d %d %d" ,j, arrayOfConnectionElements[j].startPoint_number,
+    arrayOfConnectionElements[j].endPoint_number,
+    arrayOfConnectionElements[j].startPoint_connectionPoint,
+    arrayOfConnectionElements[j].endPoint_connectionPoint );
+    j++;
+    }
+    }
+    // clean out old connection elements
+    for( i=j;i<arrayOfConnectionElementsCount;i++)
+    {
+    arrayOfConnectionElements[i].number = -1;
+    strcpy(arrayOfConnectionElements[i].description, "not set");
+    }
+    // set arrayOfConnectionElementsCount to the new value
+    arrayOfConnectionElementsCount = j;
+    
+    // correct startPointnumber or endPoint_number
+    for (i=0;i<arrayOfConnectionElementsCount;i++)
+    {
+    
+    if (arrayOfConnectionElements[i].startPoint_number > element_index)
+    {
+    arrayOfConnectionElements[i].startPoint_number -= 1;
+    }
+    
+    if (arrayOfConnectionElements[i].endPoint_number > element_index)
+    {
+    arrayOfConnectionElements[i].endPoint_number -= 1;
+    }
+    }
+    
+    
+    NSLog(@"arrayOfConnectionElementsCount=%d",arrayOfConnectionElementsCount);
+    
+    // simple overwrite with next element beginning with element_index
+    for (i=element_index;i<arrayOfElementsCount-1;i++)
+    {
+    arrayOfElements[i] = arrayOfElements[i+1];
+    arrayOfElements[i].number = i;              // modify number
+    }
+    arrayOfElementsCount--;
+    
+    arrayOfElements[arrayOfElementsCount].number = -1;
+    strcpy(arrayOfElements[arrayOfElementsCount].description, "not set");
+    
+    NSLog(@"arrayOfElementsCount=%d",arrayOfElementsCount);
+    
+    
+    }
+    
+    -(void)deleteConnector:(int)connector_index
+    {
+    int i;
+    int j;
+    
+    j=0;
+    
+    for (i=0;i<arrayOfConnectionElementsCount;i++)
+    {
+    if (i == connector_index)
+    {
+    NSLog(@"delete connection with connector_index=%d" ,i);
+    }
+    else
+    {
+    arrayOfConnectionElements[j]=arrayOfConnectionElements[i];
+    arrayOfConnectionElements[j].number = j;
+    j++;
+    }
+    }
+    arrayOfConnectionElementsCount = j;
+    //
+    arrayOfConnectionElements[j].number = -1;
+    strcpy(arrayOfConnectionElements[j].description, "not set");
+    }
+    
+ */
     
     /* test if point is within an element
      
@@ -1015,6 +1146,7 @@ class DrawingView: NSView{
             
         case DELETE_TOOL:
             NSLog("DELETE_TOOL");
+            self.deleteElementOrConnector()
             break
             
         default:
