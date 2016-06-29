@@ -13,7 +13,7 @@ struct Connection
 {
     // description data
     var number:                     Int                     // reference number
-    var type:                       Int                     // type = [DATA|CONTROL]
+    var type:                       Int                     // type = [DATAFLOW |CONTROLFLOW |COMBINEDFLOW]
     var name:                       String                  // name string
     var description:                String                  // description string
     // layout data
