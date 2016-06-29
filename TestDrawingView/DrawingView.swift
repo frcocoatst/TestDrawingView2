@@ -923,6 +923,9 @@ class DrawingView: NSView{
     /// testSelectElementInRect - tests if an element was selected by a click
     /// - parameter point: point where clicked
     /// - returns: True or False
+    ///
+    /// TBD: don't allow selected_element_index and selected_connector_index to be set at the same time
+    ///
     func testSelectElementInRect(point:NSPoint) -> Bool{
         
         for (index,e) in Elements.enumerate(){
