@@ -540,10 +540,10 @@ class DrawingView: NSView{
                         (Elements[element_end].location.y + Elements[element_end].connectionPoints[conn_end].y -
                             Elements[element_start].location.y - Elements[element_start].connectionPoints[conn_start].y)/2
                     
-                    aRect.origin.x    = aRect.origin.x - CONNRADIUS;
-                    aRect.origin.y    = aRect.origin.y - CONNRADIUS;
-                    aRect.size.width  = 2*CONNRADIUS;
-                    aRect.size.height = 2*CONNRADIUS;
+                    aRect.origin.x    = aRect.origin.x - CONNRADIUS
+                    aRect.origin.y    = aRect.origin.y - CONNRADIUS
+                    aRect.size.width  = 2*CONNRADIUS
+                    aRect.size.height = 2*CONNRADIUS
                     
                     apath.removeAllPoints()
                     apath.appendBezierPathWithOvalInRect(aRect)
@@ -554,20 +554,20 @@ class DrawingView: NSView{
                 // -------------------- show the control points
                 if (selected_connector_index != -1)
                 {
-                    dotRect.origin.x = controlPoint_1.x - CONNRADIUS;
-                    dotRect.origin.y = controlPoint_1.y - CONNRADIUS;
-                    dotRect.size.width  = 2 * CONNRADIUS;
-                    dotRect.size.height = 2 * CONNRADIUS;
+                    dotRect.origin.x = controlPoint_1.x - CONNRADIUS
+                    dotRect.origin.y = controlPoint_1.y - CONNRADIUS
+                    dotRect.size.width  = 2 * CONNRADIUS
+                    dotRect.size.height = 2 * CONNRADIUS
                     
                     apath.removeAllPoints()
                     apath.appendBezierPathWithOvalInRect(dotRect)
                     apath.lineWidth = 1
                     apath.stroke()
                     
-                    dotRect.origin.x = controlPoint_2.x - CONNRADIUS;
-                    dotRect.origin.y = controlPoint_2.y - CONNRADIUS;
-                    dotRect.size.width  = 2 * CONNRADIUS;
-                    dotRect.size.height = 2 * CONNRADIUS;
+                    dotRect.origin.x = controlPoint_2.x - CONNRADIUS
+                    dotRect.origin.y = controlPoint_2.y - CONNRADIUS
+                    dotRect.size.width  = 2 * CONNRADIUS
+                    dotRect.size.height = 2 * CONNRADIUS
                     
                     apath.appendBezierPathWithOvalInRect(dotRect)
                     apath.lineWidth = 1
@@ -604,7 +604,7 @@ class DrawingView: NSView{
             }
             else
             {
-                NSLog("distance very small");
+                NSLog("distance very small")
             }
         }
         
@@ -830,7 +830,7 @@ class DrawingView: NSView{
         }
     }
     
-    // -----------------
+    // ----------------- TBD draw text into bubble etc.
     
     /* draw a bubble
      -(void)drawABubble:(int)index
@@ -994,20 +994,20 @@ class DrawingView: NSView{
         var endPoint_number:Int
         var endPoint_connectionPoint:Int
         
-        NSLog("testSelectConnectorInRect");
+        NSLog("testSelectConnectorInRect")
         
         // test if any connector is selected
         // enumerate over all connectors
         for (index,c) in Connections.enumerate(){
             
-            startPoint_number = c.startPoint_number;
-            startPoint_connectionPoint = c.startPoint_connectionPoint;
-            endPoint_number = c.endPoint_number;
-            endPoint_connectionPoint = c.endPoint_connectionPoint;
+            startPoint_number = c.startPoint_number
+            startPoint_connectionPoint = c.startPoint_connectionPoint
+            endPoint_number = c.endPoint_number
+            endPoint_connectionPoint = c.endPoint_connectionPoint
             
             var aRect:NSRect=NSRect() // TBD: possibly add e.location.x and e.location.y
             
-            // TBD: possibly add e.location.x and e.location.y
+            //
             aRect.origin.x    = Elements[startPoint_number].location.x +
                 Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].x +
                 (Elements[endPoint_number].location.x + Elements[endPoint_number].connectionPoints[endPoint_connectionPoint].x -
@@ -1018,16 +1018,16 @@ class DrawingView: NSView{
                 (Elements[endPoint_number].location.y + Elements[endPoint_number].connectionPoints[endPoint_connectionPoint].y -
                  Elements[startPoint_number].location.y - Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].y)/2
             
-            aRect.origin.x    = aRect.origin.x - CONNRADIUS;
-            aRect.origin.y    = aRect.origin.y - CONNRADIUS;
-            aRect.size.width  = 2*CONNRADIUS;
-            aRect.size.height = 2*CONNRADIUS;
+            aRect.origin.x    = aRect.origin.x - CONNRADIUS
+            aRect.origin.y    = aRect.origin.y - CONNRADIUS
+            aRect.size.width  = 2*CONNRADIUS
+            aRect.size.height = 2*CONNRADIUS
             
             if NSPointInRect(point, aRect){
                 
-                selected_connector_index = index;
-                NSLog("selected_connector_index =%d",selected_connector_index);
-                return true;
+                selected_connector_index = index
+                NSLog("selected_connector_index =%d",selected_connector_index)
+                return true
             }
         }
         // security check
@@ -1060,24 +1060,24 @@ class DrawingView: NSView{
                         startpoint_index = cindex
                         startpoint_element = index
                         startpoint_selected = true
-                        NSLog("startpoint_selected");
+                        NSLog("startpoint_selected")
                     }
                     else
                     {
                         endpoint_index = cindex
                         endpoint_element = index
                         startpoint_selected = false
-                        NSLog("endpoint_selected");
+                        NSLog("endpoint_selected")
                     }
                     return true
                 }
             }
         }
         // reset start and end of connector
-        startpoint_index = -1;
-        startpoint_element =  -1;
-        endpoint_index = -1;
-        endpoint_element =  -1;
+        startpoint_index = -1
+        startpoint_element =  -1
+        endpoint_index = -1
+        endpoint_element =  -1
         return false
     }
     
@@ -1106,7 +1106,7 @@ class DrawingView: NSView{
     /// deleteElement - delete an element
     /// - parameter element_index: index of the element to be deleted
     /// 
-    /// TBD: fix crash
+    ///
     func deleteElement(element_index:Int){
         NSLog("deleteElement element_index=%d",element_index)
         Elements.removeAtIndex(element_index)
@@ -1122,12 +1122,12 @@ class DrawingView: NSView{
         // correct references to the elements where the connections are made
         for (index,c) in Connections.enumerate()
         {
-            if (c.startPoint_number > element_index)
+            if c.startPoint_number > element_index
             {
                 Connections[index].startPoint_number = c.startPoint_number - 1
             }
             
-            if (c.endPoint_number > element_index)
+            if c.endPoint_number > element_index
             {
                 Connections[index].endPoint_number = c.endPoint_number - 1
             }
@@ -1143,110 +1143,6 @@ class DrawingView: NSView{
         Connections.removeAtIndex(connector_index)
         //
     }
-    
-    /*
-     -(void)deleteElement:(int)element_index
-     {
-     // arrayOfElementsCount
-     int i;
-     int j;
-     
-     //
-     // search for connector that were using arrayOfElements[element_index] and delete them
-     
-     j=0;
-     NSLog(@"arrayOfConnectionElementsCount:%d arrayOfConnectionElementsCount=%d",element_index,arrayOfConnectionElementsCount);
-     for (i=0;i<arrayOfConnectionElementsCount;i++)
-     {
-     if ((arrayOfConnectionElements[i].startPoint_number == element_index) ||
-     (arrayOfConnectionElements[i].endPoint_number == element_index))
-     {
-     //
-     NSLog(@"delete connection with startPoint||endPoint lineelement=%d" ,i);
-     //[self deleteConnector:i];
-     
-     }
-     else
-     {
-     arrayOfConnectionElements[j]=arrayOfConnectionElements[i];
-     NSLog(@"arrayOfConnectionElements[j=%d]:%d %d %d %d" ,j, arrayOfConnectionElements[j].startPoint_number,
-     arrayOfConnectionElements[j].endPoint_number,
-     arrayOfConnectionElements[j].startPoint_connectionPoint,
-     arrayOfConnectionElements[j].endPoint_connectionPoint );
-     j++;
-     }
-     }
-     // clean out old connection elements
-     for( i=j;i<arrayOfConnectionElementsCount;i++)
-     {
-     arrayOfConnectionElements[i].number = -1;
-     strcpy(arrayOfConnectionElements[i].description, "not set");
-     }
-     // set arrayOfConnectionElementsCount to the new value
-     arrayOfConnectionElementsCount = j;
-     
-     // correct startPointnumber or endPoint_number
-     for (i=0;i<arrayOfConnectionElementsCount;i++)
-     {
-     
-     if (arrayOfConnectionElements[i].startPoint_number > element_index)
-     {
-     arrayOfConnectionElements[i].startPoint_number -= 1;
-     }
-     
-     if (arrayOfConnectionElements[i].endPoint_number > element_index)
-     {
-     arrayOfConnectionElements[i].endPoint_number -= 1;
-     }
-     }
-     
-     
-     NSLog(@"arrayOfConnectionElementsCount=%d",arrayOfConnectionElementsCount);
-     
-     // simple overwrite with next element beginning with element_index
-     for (i=element_index;i<arrayOfElementsCount-1;i++)
-     {
-     arrayOfElements[i] = arrayOfElements[i+1];
-     arrayOfElements[i].number = i;              // modify number
-     }
-     arrayOfElementsCount--;
-     
-     arrayOfElements[arrayOfElementsCount].number = -1;
-     strcpy(arrayOfElements[arrayOfElementsCount].description, "not set");
-     
-     NSLog(@"arrayOfElementsCount=%d",arrayOfElementsCount);
-     
-     
-     }
-     
-     -(void)deleteConnector:(int)connector_index
-     {
-     int i;
-     int j;
-     
-     j=0;
-     
-     for (i=0;i<arrayOfConnectionElementsCount;i++)
-     {
-     if (i == connector_index)
-     {
-     NSLog(@"delete connection with connector_index=%d" ,i);
-     }
-     else
-     {
-     arrayOfConnectionElements[j]=arrayOfConnectionElements[i];
-     arrayOfConnectionElements[j].number = j;
-     j++;
-     }
-     }
-     arrayOfConnectionElementsCount = j;
-     //
-     arrayOfConnectionElements[j].number = -1;
-     strcpy(arrayOfConnectionElements[j].description, "not set");
-     }
-     
-     */
-    
     
     override func mouseDown(theEvent: NSEvent) {
         super.mouseDown(theEvent)
@@ -1274,33 +1170,33 @@ class DrawingView: NSView{
             {
                 if self.testControlPointSelected(mousePointInView)==true
                 {
-                    NSLog("ControlPoint selected");
-                    //[self setNeedsDisplay:YES];
+                    NSLog("ControlPoint selected")
+                    //[self setNeedsDisplay:YES]
                     needsDisplay = true
-                    break;
+                    break
                 }
                 else
                 {
-                    NSLog("no ControlPoint selected");
+                    NSLog("no ControlPoint selected")
                 }
             }
             
             if self.testSelectElementInRect(mousePointInView) == true    // mousePointInView instead of snapPointInView!
             {
-                NSLog("element selected");
+                NSLog("element selected")
             }
             else
             {
-                NSLog("no element selected");
+                NSLog("no element selected")
             }
             
             if self.testSelectConnectorInRect(mousePointInView) == true
             {
-                NSLog("connector selected");
+                NSLog("connector selected")
             }
             else
             {
-                NSLog("no connector selected");
+                NSLog("no connector selected")
             }
             
             needsDisplay = true
@@ -1331,11 +1227,11 @@ class DrawingView: NSView{
             NSLog("CONNECT_TOOL")
             if self.testPointInConnector(mousePointInView) == true
             {
-                NSLog("connector");
+                NSLog("connector")
             }
             else
             {
-                NSLog("no connector");
+                NSLog("no connector")
             }
             
             break
@@ -1461,14 +1357,14 @@ class DrawingView: NSView{
         case CONNECT_TOOL:
             if startpoint_selected == true
             {
-                NSLog("startpoint_index=%d startpoint_element=%d",startpoint_index, startpoint_element);
+                NSLog("startpoint_index=%d startpoint_element=%d",startpoint_index, startpoint_element)
             }
             else
             if endpoint_index > -1 && startpoint_index > -1    // both exist
             {
                 if endpoint_element != startpoint_element
                 {
-                    NSLog("endpoint_index=%d  endpoint_element=%d",endpoint_index, endpoint_element);
+                    NSLog("endpoint_index=%d  endpoint_element=%d",endpoint_index, endpoint_element)
                         
                     self.addAConnector()
                     needsDisplay = true
