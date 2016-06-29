@@ -25,6 +25,12 @@ var selectedTool:Int = 0
 var selected_element_index = -1
 var selected_connector_index = -1
 
+var startpoint_selected:Bool = false
+var startpoint_element = -1
+var startpoint_index = -1
+var endpoint_element = -1
+var endpoint_index = -1
+
 var showConnectionPoints:Bool = false
 
 
@@ -34,6 +40,10 @@ let TYPE_STORE      = 3
 let CONNECT         = 4
 let TYPE_STATE      = 5
 let TYPE_INPUT      = 6
+
+let DATAFLOW        = 0
+let CONTROLFLOW     = 1
+let COMBINEDFLOW    = 2
 
 /// DrawingView - subclass of NSView
 ///
@@ -70,7 +80,6 @@ class DrawingView: NSView{
     }
     
     // drawRect
-    
     override func drawRect(dirtyRect: NSRect)
     {
         NSColor.whiteColor().setFill()
@@ -79,19 +88,29 @@ class DrawingView: NSView{
         super.drawRect(dirtyRect)
         //
         self.drawAllElements()
+        self.drawAllConnectors()
     }
+    /*
+     /// testPointInRect - tests if point is in rectangle
+     /// - parameter point: point where to add
+     ///
+     func testPointInRect(point: NSPoint)->Bool {
+     return false
+     
+     }
+     */
     
-    
-    func testPointInRect(point: NSPoint)->Bool {
-        return false
-        
-    }
-    
+    /// setBubbleOrConnectorName - sets the name
+    /// - parameter text: name
+    ///
     func setBubbleOrConnectorName(text: NSString){
         NSLog("setBubbleOrConnectorName = %@",text)
         
     }
     
+    /// setViewSize - sets the size of the view
+    /// - parameter value: size
+    ///
     func setViewSize(value:Double)
     {
         NSLog("setViewSize = %f",value)
@@ -113,6 +132,9 @@ class DrawingView: NSView{
         needsDisplay = true
     }
     
+    /// setSelectedTool - sets the size of the view
+    /// - parameter tool: selected tool
+    ///
     func setSelectedTool(tool:Int)
     {
         NSLog("setSelectedTool in DrawingView with tool: %d",tool)
@@ -125,7 +147,7 @@ class DrawingView: NSView{
         selected_connector_index           = -1
         
         // if selectedTool == ARROW_TOOL || selectedTool == CONNECT_TOOL
-        if selectedTool == CONNECT_TOOL
+        if selectedTool == ARROW_TOOL || selectedTool == CONNECT_TOOL
         {
             showConnectionPoints=true
         }
@@ -136,13 +158,15 @@ class DrawingView: NSView{
         needsDisplay = true
     }
     
-
     
+    /// snapToGrid - sets the clickPoint to a gridPoint
+    /// - parameter clickPoint: clickpoint
+    /// - returns: nearest gridpoint
     func snapToGrid(clickPoint:NSPoint) -> NSPoint{
         //var snapPoint:NSPoint
         var x:Int
         var y:Int
-    
+        
         x = (Int(clickPoint.x) + GRID_RADIUS/2)/GRID_RADIUS
         y = (Int(clickPoint.y) + GRID_RADIUS/2)/GRID_RADIUS
         
@@ -161,9 +185,10 @@ class DrawingView: NSView{
     
     
     
-    /// addABubble - adds a bubble at a certain location
+    /** addABubble - adds a bubble at a certain location
     /// - parameter atPoint: point where to add
     ///
+     */
     func addABubble(atPoint:NSPoint)
     {
         let π = M_PI
@@ -207,7 +232,7 @@ class DrawingView: NSView{
         // add connection points to cPoints array
         var cPoints = [NSPoint]()
         var actualPoint:NSPoint = NSMakePoint(0.0, 0.0)
-
+        
         
         actualPoint.x = 0.0
         actualPoint.y = RADIUS
@@ -278,7 +303,7 @@ class DrawingView: NSView{
         let snapedmousePoint:NSPoint = self.snapToGrid(atPoint)
         
         NSLog("snapedmousePoint %f %f",snapedmousePoint.x, snapedmousePoint.y)
-
+        
         // add connection points to cPoints array
         var cPoints = [NSPoint]()
         var actualPoint:NSPoint = NSMakePoint(0.0, 0.0)
@@ -396,7 +421,7 @@ class DrawingView: NSView{
         actualPoint.x = 0.0
         actualPoint.y = -STOREHEIGHT
         cPoints.append(actualPoint)
-
+        
         
         Elements.append(Element(number: ElementCounter,
             type: TYPE_STATE,
@@ -409,12 +434,191 @@ class DrawingView: NSView{
         ElementCounter += 1
     }
     
+    
+    
+    func addAConnector()
+    {
+        NSLog("addAConnector: ConnectionCounter=%d", ConnectionCounter)
+        
+        // add control points
+        var controlPoint_1 = NSPoint()
+        var controlPoint_2 = NSPoint()
+        var labelPoint = NSPoint()
+        
+        let start:NSPoint = NSPoint(x:Elements[startpoint_element].location.x + Elements[startpoint_element].connectionPoints[startpoint_index].x,
+            y: Elements[startpoint_element].location.y + Elements[startpoint_element].connectionPoints[startpoint_index].y)
+        
+        let end:NSPoint   = NSPoint(x:Elements[endpoint_element].location.x +
+            Elements[endpoint_element].connectionPoints[endpoint_index].x,
+            y:Elements[endpoint_element].location.y + Elements[endpoint_element].connectionPoints[endpoint_index].y)
+        
+        let length:Float = hypotf(Float(end.x - start.x), Float(end.y - start.y))
+        
+        if length > 10.0
+        {
+            controlPoint_1 = NSPoint(x: start.x + (end.x-start.x)/4, y: start.y + (end.y-start.y)/4)
+            controlPoint_2 = NSPoint(x: start.x + (end.x-start.x)*3/4, y: start.y + (end.y-start.y)*3/4)
+            // TBD: calculate the label point
+            labelPoint = NSPoint(x: start.x + (end.x-start.x)/4, y: start.y + (end.y-start.y)/4)
+        }
+        else
+        {
+            controlPoint_1 = start
+            controlPoint_2 = end
+            // TBD: calculate the label point
+            labelPoint = start
+        }
+        
+        Connections.append(Connection(number:ConnectionCounter,
+            type:DATAFLOW,
+            name: "flow name",
+            description: "long flow description",
+            startPoint_number:  startpoint_element,
+            startPoint_connectionPoint: startpoint_index,
+            endPoint_number: endpoint_element,
+            endPoint_connectionPoint: endpoint_index,
+            controlPoint1:controlPoint_1,
+            controlPoint2:controlPoint_2,
+            labelPoint: labelPoint
+            ))
+        
+        ConnectionCounter += 1
+    }
+    
+    func drawAllConnectors()
+    {
+        //var referencePoint:NSPoint
+        //var textPoint:NSPoint
+        
+        var dotRect: NSRect = NSRect()
+        let apath  = NSBezierPath()
+        let mycurve = NSBezierPath()
+        
+        //NSLog("drawAllConnectors")
+        
+        for (index,c) in Connections.enumerate(){
+            
+            if ((selected_connector_index != -1) && (selected_connector_index == index))
+            {
+                NSColor.redColor().set()
+            }
+            else
+            {
+                NSColor.greenColor().set()
+            }
+            let element_start:Int   = c.startPoint_number
+            let conn_start:Int      = c.startPoint_connectionPoint
+            let element_end:Int     = c.endPoint_number
+            let conn_end:Int        = c.endPoint_connectionPoint
+            
+            let start:NSPoint = NSPoint(x:(Elements[element_start].location.x + Elements[element_start].connectionPoints[conn_start].x),
+                                        y:(Elements[element_start].location.y + Elements[element_start].connectionPoints[conn_start].y))
+            
+            let end:NSPoint   = NSPoint(x:(Elements[element_end].location.x + Elements[element_end].connectionPoints[conn_end].x),
+                                        y:(Elements[element_end].location.y + Elements[element_end].connectionPoints[conn_end].y))
+            
+            let length:Float = hypotf(Float(end.x - start.x),Float(end.y - start.y))
+            
+            if (length > 1.0)
+            {
+                // get the controlpoints
+                let controlPoint_1 = c.controlPoint1
+                let controlPoint_2 = c.controlPoint2
+                
+                // show the selection point of a connector
+                if showConnectionPoints == true
+                {
+                    var aRect:NSRect=NSRect() //
+                    
+                    aRect.origin.x    = Elements[element_start].location.x +
+                        Elements[element_start].connectionPoints[conn_start].x +
+                        (Elements[element_end].location.x + Elements[element_end].connectionPoints[conn_end].x -
+                            Elements[element_start].location.x - Elements[element_start].connectionPoints[conn_start].x)/2
+                    
+                    aRect.origin.y    = Elements[element_start].location.y +
+                        Elements[element_start].connectionPoints[conn_start].y +
+                        (Elements[element_end].location.y + Elements[element_end].connectionPoints[conn_end].y -
+                            Elements[element_start].location.y - Elements[element_start].connectionPoints[conn_start].y)/2
+                    
+                    aRect.origin.x    = aRect.origin.x - CONNRADIUS;
+                    aRect.origin.y    = aRect.origin.y - CONNRADIUS;
+                    aRect.size.width  = 2*CONNRADIUS;
+                    aRect.size.height = 2*CONNRADIUS;
+                    
+                    apath.removeAllPoints()
+                    apath.appendBezierPathWithOvalInRect(aRect)
+                    apath.lineWidth = 1
+                    apath.stroke()
+                }
+                
+                // -------------------- show the control points
+                if (selected_connector_index != -1)
+                {
+                    dotRect.origin.x = controlPoint_1.x - CONNRADIUS;
+                    dotRect.origin.y = controlPoint_1.y - CONNRADIUS;
+                    dotRect.size.width  = 2 * CONNRADIUS;
+                    dotRect.size.height = 2 * CONNRADIUS;
+                    
+                    apath.removeAllPoints()
+                    apath.appendBezierPathWithOvalInRect(dotRect)
+                    apath.lineWidth = 1
+                    apath.stroke()
+                    
+                    dotRect.origin.x = controlPoint_2.x - CONNRADIUS;
+                    dotRect.origin.y = controlPoint_2.y - CONNRADIUS;
+                    dotRect.size.width  = 2 * CONNRADIUS;
+                    dotRect.size.height = 2 * CONNRADIUS;
+                    
+                    apath.appendBezierPathWithOvalInRect(dotRect)
+                    apath.lineWidth = 1
+                    apath.stroke()
+                }
+                if (selected_connector_index == index)
+                {
+                    apath.removeAllPoints()
+                    apath.moveToPoint(start)
+                    apath.lineToPoint(controlPoint_1)
+                    apath.stroke()
+                    
+                    apath.moveToPoint(end)
+                    apath.lineToPoint(controlPoint_2)
+                    apath.stroke()
+                }
+                
+                
+                
+                
+                
+                // show resulting curve
+                
+                
+                mycurve.appendBezierPath(NSBezierPath.curveFromPointtoPointWithcontrolPoints(start, endPoint: end,
+                    controlPoint1: controlPoint_1, controlPoint2: controlPoint_2,
+                    tailWidth: 1, headWidth: 15, headLength: 15))
+                
+                
+                // Draw the outline
+                // NSColor.blueColor().set()
+                // mycurve.lineWidth = 4
+                mycurve.stroke()
+            }
+            else
+            {
+                NSLog("distance very small");
+            }
+        }
+        
+    }
+    
+    /// drawAllElements - draws alle elements
+    ///
     func drawAllElements()
     {
         let path = NSBezierPath()
         let apath = NSBezierPath()
         
         // selected_element_index = 2  // change this done in testSelectElementInRect
+        //NSLog("drawAllElements")
         
         for (index,e) in Elements.enumerate(){
             
@@ -576,11 +780,11 @@ class DrawingView: NSView{
                 path.lineToPoint(p4)
                 
                 path.stroke()
-
+                
                 // ------ draw text  ------
                 // tbd
                 // let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
-
+                
                 
                 
             }
@@ -716,25 +920,30 @@ class DrawingView: NSView{
      
      */
     
-    
+    /// testSelectElementInRect - tests if an element was selected by a click
+    /// - parameter point: point where clicked
+    /// - returns: True or False
     func testSelectElementInRect(point:NSPoint) -> Bool{
         
         for (index,e) in Elements.enumerate(){
             let aRect = NSRect(x: e.location.x - RADIUS,
-                              y: e.location.y - RADIUS,
-                              width: 2*RADIUS,
-                              height: 2*RADIUS)
+                               y: e.location.y - RADIUS,
+                               width: 2*RADIUS,
+                               height: 2*RADIUS)
             
             if NSPointInRect(point, aRect){
                 selected_element_index = index
                 NSLog("selected_element_index =%d",selected_element_index)
                 return true
             }
-       
+            
         }
         return false
     }
     
+    /// testControlPointSelected - tests if a control point was selected by a click
+    /// - parameter point: point where clicked
+    /// - returns: True or False
     func testControlPointSelected(point:NSPoint) -> Bool{
         
         // security check
@@ -743,6 +952,7 @@ class DrawingView: NSView{
             return false
         }
         
+        // TBD possibly relative corrordinates add Connections[selected_connector_index].location.x .y ???
         
         // get the controlpoints
         let controlPoint_1 : NSPoint = Connections[selected_connector_index].controlPoint1
@@ -774,25 +984,107 @@ class DrawingView: NSView{
         return false
     }
     
+    /// testSelectConnectorInRect - tests if a connector was selected by a click
+    /// - parameter point: point where clicked
+    /// - returns: True or False
     func testSelectConnectorInRect(point:NSPoint) -> Bool{
         
-        // security check
-        if (selected_connector_index == -1)
-        {
-            return false
+        var startPoint_number:Int
+        var startPoint_connectionPoint:Int
+        var endPoint_number:Int
+        var endPoint_connectionPoint:Int
+        
+        NSLog("testSelectConnectorInRect");
+        
+        // test if any connector is selected
+        // enumerate over all connectors
+        for (index,c) in Connections.enumerate(){
+            
+            startPoint_number = c.startPoint_number;
+            startPoint_connectionPoint = c.startPoint_connectionPoint;
+            endPoint_number = c.endPoint_number;
+            endPoint_connectionPoint = c.endPoint_connectionPoint;
+            
+            var aRect:NSRect=NSRect() // TBD: possibly add e.location.x and e.location.y
+            
+            // TBD: possibly add e.location.x and e.location.y
+            aRect.origin.x    = Elements[startPoint_number].location.x +
+                Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].x +
+                (Elements[endPoint_number].location.x + Elements[endPoint_number].connectionPoints[endPoint_connectionPoint].x -
+                 Elements[startPoint_number].location.x - Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].x)/2
+            
+            aRect.origin.y    = Elements[startPoint_number].location.y +
+                Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].y +
+                (Elements[endPoint_number].location.y + Elements[endPoint_number].connectionPoints[endPoint_connectionPoint].y -
+                 Elements[startPoint_number].location.y - Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].y)/2
+            
+            aRect.origin.x    = aRect.origin.x - CONNRADIUS;
+            aRect.origin.y    = aRect.origin.y - CONNRADIUS;
+            aRect.size.width  = 2*CONNRADIUS;
+            aRect.size.height = 2*CONNRADIUS;
+            
+            if NSPointInRect(point, aRect){
+                
+                selected_connector_index = index;
+                NSLog("selected_connector_index =%d",selected_connector_index);
+                return true;
+            }
         }
+        // security check
+        selected_connector_index == -1
         return false
     }
+
     
-    // test if point is within a connector
+    /// testPointInConnector - tests if a point is within a connectorpoint
+    /// - parameter point: point where clicked
+    /// - returns: True or False
     func testPointInConnector(point:NSPoint) -> Bool{
         
+        // enumerate over all elements
+        for (index,e) in Elements.enumerate(){
+            
+            // iterate over all connectionPoints
+            for (cindex,cp) in e.connectionPoints.enumerate(){
+                
+                // rect around a connectionPoint            // TBD: possibly add e.location.x and e.location.y
+                let aRect = NSRect(x: e.location.x + cp.x - CONNRADIUS,
+                                   y: e.location.y + cp.y - CONNRADIUS,
+                                   width: 2*CONNRADIUS,
+                                   height: 2*CONNRADIUS)
+                
+                //
+                if NSPointInRect(point, aRect){
+                    if (startpoint_selected == false)
+                    {
+                        startpoint_index = cindex
+                        startpoint_element = index
+                        startpoint_selected = true
+                        NSLog("startpoint_selected");
+                    }
+                    else
+                    {
+                        endpoint_index = cindex
+                        endpoint_element = index
+                        startpoint_selected = false
+                        NSLog("endpoint_selected");
+                    }
+                    return true
+                }
+            }
+        }
+        // reset start and end of connector
+        startpoint_index = -1;
+        startpoint_element =  -1;
+        endpoint_index = -1;
+        endpoint_element =  -1;
         return false
     }
     
     
     // ------------------ delete methods ------------------
-    
+    /// deleteElementOrConnector - deletes an element or a connector
+    ///
     func deleteElementOrConnector(){
         NSLog("deleteElementOrConnector in DrawingView called")
         if (selected_element_index != -1)
@@ -811,238 +1103,149 @@ class DrawingView: NSView{
         needsDisplay = true
     }
     
+    /// deleteElement - delete an element
+    /// - parameter element_index: index of the element to be deleted
+    /// 
+    /// TBD: fix crash
     func deleteElement(element_index:Int){
         NSLog("deleteElement element_index=%d",element_index)
         Elements.removeAtIndex(element_index)
+        
         // search in Connectors for in/out connections with the actual element
+        // see http://stackoverflow.com/questions/28323848/removing-from-array-during-enumeration-in-swift
+        for (index,c) in Connections.enumerate().reverse(){
+            if c.startPoint_number == element_index || c.endPoint_number == element_index{
+                Connections.removeAtIndex(index)
+            }
+        }
+        
+        // correct references to the elements where the connections are made
+        for (index,c) in Connections.enumerate()
+        {
+            if (c.startPoint_number > element_index)
+            {
+                Connections[index].startPoint_number = c.startPoint_number - 1
+            }
+            
+            if (c.endPoint_number > element_index)
+            {
+                Connections[index].endPoint_number = c.endPoint_number - 1
+            }
+        }
+        
     }
     
+    /// deleteConnector - delete a connector
+    /// - parameter connector_index: index of the connector to be deleted
+    ///
     func deleteConnector(connector_index:Int){
         NSLog("deleteConnector connector_index=%d",connector_index)
         Connections.removeAtIndex(connector_index)
+        //
     }
     
     /*
-    -(void)deleteElementOrConnector
-    {
-    if (selected_element_index != -1)
-    {
-    [self deleteElement:selected_element_index];
-    NSLog(@"deleteElement=%d", selected_element_index);
-    // set back selection
-    selected_element_index = -1;
-    }
-    if (selected_connector_index != -1)
-    {
-    [self deleteConnector: selected_connector_index ];
-    NSLog(@"deleteConnector=%d", selected_connector_index);
-    // set back selection
-    selected_connector_index = -1;
-    }
-    // update the trackingAreas
-    //[self updateTrackingAreas];
-    [self setNeedsDisplay:YES];
-    
-    }
-    
-    
-    -(void)deleteElement:(int)element_index
-    {
-    // arrayOfElementsCount
-    int i;
-    int j;
-    
-    //
-    // search for connector that were using arrayOfElements[element_index] and delete them
-    
-    j=0;
-    NSLog(@"arrayOfConnectionElementsCount:%d arrayOfConnectionElementsCount=%d",element_index,arrayOfConnectionElementsCount);
-    for (i=0;i<arrayOfConnectionElementsCount;i++)
-    {
-    if ((arrayOfConnectionElements[i].startPoint_number == element_index) ||
-    (arrayOfConnectionElements[i].endPoint_number == element_index))
-    {
-    //
-    NSLog(@"delete connection with startPoint||endPoint lineelement=%d" ,i);
-    //[self deleteConnector:i];
-    
-    }
-    else
-    {
-    arrayOfConnectionElements[j]=arrayOfConnectionElements[i];
-    NSLog(@"arrayOfConnectionElements[j=%d]:%d %d %d %d" ,j, arrayOfConnectionElements[j].startPoint_number,
-    arrayOfConnectionElements[j].endPoint_number,
-    arrayOfConnectionElements[j].startPoint_connectionPoint,
-    arrayOfConnectionElements[j].endPoint_connectionPoint );
-    j++;
-    }
-    }
-    // clean out old connection elements
-    for( i=j;i<arrayOfConnectionElementsCount;i++)
-    {
-    arrayOfConnectionElements[i].number = -1;
-    strcpy(arrayOfConnectionElements[i].description, "not set");
-    }
-    // set arrayOfConnectionElementsCount to the new value
-    arrayOfConnectionElementsCount = j;
-    
-    // correct startPointnumber or endPoint_number
-    for (i=0;i<arrayOfConnectionElementsCount;i++)
-    {
-    
-    if (arrayOfConnectionElements[i].startPoint_number > element_index)
-    {
-    arrayOfConnectionElements[i].startPoint_number -= 1;
-    }
-    
-    if (arrayOfConnectionElements[i].endPoint_number > element_index)
-    {
-    arrayOfConnectionElements[i].endPoint_number -= 1;
-    }
-    }
-    
-    
-    NSLog(@"arrayOfConnectionElementsCount=%d",arrayOfConnectionElementsCount);
-    
-    // simple overwrite with next element beginning with element_index
-    for (i=element_index;i<arrayOfElementsCount-1;i++)
-    {
-    arrayOfElements[i] = arrayOfElements[i+1];
-    arrayOfElements[i].number = i;              // modify number
-    }
-    arrayOfElementsCount--;
-    
-    arrayOfElements[arrayOfElementsCount].number = -1;
-    strcpy(arrayOfElements[arrayOfElementsCount].description, "not set");
-    
-    NSLog(@"arrayOfElementsCount=%d",arrayOfElementsCount);
-    
-    
-    }
-    
-    -(void)deleteConnector:(int)connector_index
-    {
-    int i;
-    int j;
-    
-    j=0;
-    
-    for (i=0;i<arrayOfConnectionElementsCount;i++)
-    {
-    if (i == connector_index)
-    {
-    NSLog(@"delete connection with connector_index=%d" ,i);
-    }
-    else
-    {
-    arrayOfConnectionElements[j]=arrayOfConnectionElements[i];
-    arrayOfConnectionElements[j].number = j;
-    j++;
-    }
-    }
-    arrayOfConnectionElementsCount = j;
-    //
-    arrayOfConnectionElements[j].number = -1;
-    strcpy(arrayOfConnectionElements[j].description, "not set");
-    }
-    
- */
-    
-    /* test if point is within an element
-     
-     // test if point is within a connector
-     - (BOOL)testSelectConnectorInRect:(NSPoint)point
+     -(void)deleteElement:(int)element_index
      {
-     int i;
-     // int j;
-     NSRect aRect;
-     int startPoint_number;
-     int startPoint_connectionPoint;
-     int endPoint_number;
-     int endPoint_connectionPoint;
-     
-     NSLog(@"testSelectConnectorInRect");
-     
-     // test if any connector is selected
-     for (i=0; i<arrayOfConnectionElementsCount; i++)
-     {
-     startPoint_number = arrayOfConnectionElements[i].startPoint_number;
-     startPoint_connectionPoint = arrayOfConnectionElements[i].startPoint_connectionPoint;
-     endPoint_number = arrayOfConnectionElements[i].endPoint_number;
-     endPoint_connectionPoint = arrayOfConnectionElements[i].endPoint_connectionPoint;
-     
-     aRect.origin.x    = arrayOfElements[startPoint_number].connectionPoints[startPoint_connectionPoint].x +
-     (arrayOfElements[endPoint_number].connectionPoints[endPoint_connectionPoint].x -
-     arrayOfElements[startPoint_number].connectionPoints[startPoint_connectionPoint].x)/2;
-     
-     aRect.origin.y    = arrayOfElements[startPoint_number].connectionPoints[startPoint_connectionPoint].y +
-     (arrayOfElements[endPoint_number].connectionPoints[endPoint_connectionPoint].y -
-     arrayOfElements[startPoint_number].connectionPoints[startPoint_connectionPoint].y)/2;
-     
-     aRect.origin.x    = aRect.origin.x - CONNRADIUS;
-     aRect.origin.y    = aRect.origin.y - CONNRADIUS;
-     aRect.size.width  = 2*CONNRADIUS;
-     aRect.size.height = 2*CONNRADIUS;
-     
-     if (NSPointInRect(point, aRect) == YES)
-     {
-     selected_connector_index = i;
-     NSLog(@"selected_connector_index =%d",selected_connector_index);
-     //            NSLog(@"Element=%03d:%f,%f,%f,%f %f,%f",i,aRect.origin.x,aRect.origin.y,aRect.size.width,aRect.size.height,point.x,point.y);
-     return YES;
-     }
-     }
-     
-     selected_connector_index = -1;
-     return NO;
-     }
-     
-     
-     // test if point is within a connector
-     - (BOOL)testPointInConnector:(NSPoint)point
-     {
+     // arrayOfElementsCount
      int i;
      int j;
-     NSRect aRect;
      
-     // test if a connection point of an element is selected
-     for (i=0; i<arrayOfElementsCount; i++)
+     //
+     // search for connector that were using arrayOfElements[element_index] and delete them
+     
+     j=0;
+     NSLog(@"arrayOfConnectionElementsCount:%d arrayOfConnectionElementsCount=%d",element_index,arrayOfConnectionElementsCount);
+     for (i=0;i<arrayOfConnectionElementsCount;i++)
      {
-     for(j=0; j<arrayOfElements[i].number_connectionPoint; j++)
+     if ((arrayOfConnectionElements[i].startPoint_number == element_index) ||
+     (arrayOfConnectionElements[i].endPoint_number == element_index))
      {
-     aRect.origin.x = arrayOfElements[i].connectionPoints[j].x - CONNRADIUS;
-     aRect.origin.y = arrayOfElements[i].connectionPoints[j].y - CONNRADIUS;
-     aRect.size.width  = 2*CONNRADIUS;
-     aRect.size.height = 2*CONNRADIUS;
-     if (NSPointInRect(point, aRect) == YES)
-     {
-     if (startpoint_selected == NO)
-     {
-     startpoint_index = j;
-     startpoint_element = i;
-     startpoint_selected = YES;
-     NSLog(@"startpoint_selected");
+     //
+     NSLog(@"delete connection with startPoint||endPoint lineelement=%d" ,i);
+     //[self deleteConnector:i];
+     
      }
      else
      {
-     endpoint_index = j;
-     endpoint_element = i;
-     startpoint_selected = NO;
-     NSLog(@"endpoint_selected");
+     arrayOfConnectionElements[j]=arrayOfConnectionElements[i];
+     NSLog(@"arrayOfConnectionElements[j=%d]:%d %d %d %d" ,j, arrayOfConnectionElements[j].startPoint_number,
+     arrayOfConnectionElements[j].endPoint_number,
+     arrayOfConnectionElements[j].startPoint_connectionPoint,
+     arrayOfConnectionElements[j].endPoint_connectionPoint );
+     j++;
      }
-     return YES;
+     }
+     // clean out old connection elements
+     for( i=j;i<arrayOfConnectionElementsCount;i++)
+     {
+     arrayOfConnectionElements[i].number = -1;
+     strcpy(arrayOfConnectionElements[i].description, "not set");
+     }
+     // set arrayOfConnectionElementsCount to the new value
+     arrayOfConnectionElementsCount = j;
+     
+     // correct startPointnumber or endPoint_number
+     for (i=0;i<arrayOfConnectionElementsCount;i++)
+     {
+     
+     if (arrayOfConnectionElements[i].startPoint_number > element_index)
+     {
+     arrayOfConnectionElements[i].startPoint_number -= 1;
+     }
+     
+     if (arrayOfConnectionElements[i].endPoint_number > element_index)
+     {
+     arrayOfConnectionElements[i].endPoint_number -= 1;
      }
      }
+     
+     
+     NSLog(@"arrayOfConnectionElementsCount=%d",arrayOfConnectionElementsCount);
+     
+     // simple overwrite with next element beginning with element_index
+     for (i=element_index;i<arrayOfElementsCount-1;i++)
+     {
+     arrayOfElements[i] = arrayOfElements[i+1];
+     arrayOfElements[i].number = i;              // modify number
      }
-     // reset start and end of connector
-     startpoint_index = -1;
-     startpoint_element =  -1;
-     endpoint_index = -1;
-     endpoint_element =  -1;
-     return NO;
+     arrayOfElementsCount--;
+     
+     arrayOfElements[arrayOfElementsCount].number = -1;
+     strcpy(arrayOfElements[arrayOfElementsCount].description, "not set");
+     
+     NSLog(@"arrayOfElementsCount=%d",arrayOfElementsCount);
+     
+     
      }
+     
+     -(void)deleteConnector:(int)connector_index
+     {
+     int i;
+     int j;
+     
+     j=0;
+     
+     for (i=0;i<arrayOfConnectionElementsCount;i++)
+     {
+     if (i == connector_index)
+     {
+     NSLog(@"delete connection with connector_index=%d" ,i);
+     }
+     else
+     {
+     arrayOfConnectionElements[j]=arrayOfConnectionElements[i];
+     arrayOfConnectionElements[j].number = j;
+     j++;
+     }
+     }
+     arrayOfConnectionElementsCount = j;
+     //
+     arrayOfConnectionElements[j].number = -1;
+     strcpy(arrayOfConnectionElements[j].description, "not set");
+     }
+     
      */
-    
     
     
     override func mouseDown(theEvent: NSEvent) {
@@ -1066,43 +1269,41 @@ class DrawingView: NSView{
             {
                 NSLog("element selected--> selected_element_index=%d", selected_element_index)
             }
-            /*
-            if (selected_connector_index != -1)
+            
+            if selected_connector_index != -1
             {
-                if ([self testControlPointSelected:mousePointInView]==YES)
+                if self.testControlPointSelected(mousePointInView)==true
                 {
-                    NSLog(@"ControlPoint selected");
-                    [self setNeedsDisplay:YES];
+                    NSLog("ControlPoint selected");
+                    //[self setNeedsDisplay:YES];
+                    needsDisplay = true
                     break;
                 }
                 else
                 {
-                    NSLog(@"no ControlPoint selected");
+                    NSLog("no ControlPoint selected");
                 }
             }
             
-            if ([self testSelectElementInRect:mousePointInView]==YES)    // mousePointInView instead of snapPointInView!
+            if self.testSelectElementInRect(mousePointInView) == true    // mousePointInView instead of snapPointInView!
             {
-                NSLog(@"element selected");
+                NSLog("element selected");
             }
             else
             {
-                NSLog(@"no element selected");
+                NSLog("no element selected");
             }
             
-            if ([self testSelectConnectorInRect:mousePointInView]==YES)
+            if self.testSelectConnectorInRect(mousePointInView) == true
             {
-                NSLog(@"connector selected");
+                NSLog("connector selected");
             }
             else
             {
-                NSLog(@"no connector selected");
+                NSLog("no connector selected");
             }
             
-            [self setNeedsDisplay:YES];
-            
-            
-     */
+            needsDisplay = true
             break
             
         case BUBBLE_TOOL:
@@ -1128,6 +1329,15 @@ class DrawingView: NSView{
             
         case CONNECT_TOOL:
             NSLog("CONNECT_TOOL")
+            if self.testPointInConnector(mousePointInView) == true
+            {
+                NSLog("connector");
+            }
+            else
+            {
+                NSLog("no connector");
+            }
+            
             break
             
         case STATE_TOOL:
@@ -1173,23 +1383,23 @@ class DrawingView: NSView{
         case ARROW_TOOL:
             
             /* handle control points of the selected connector
-            if (selected_connector_index != -1)
-            {
-                if (controlpoint1_selected == YES)
-                {
-                    // set intermediate control point
-                    arrayOfConnectionElements[selected_connector_index].controlPoint[0]  = mousePointInView;
-                    swift: Connections[selected_connector_index].controlPoint[0]
-                }
-                else
-                    if (controlpoint2_selected == YES)
-                    {
-                        // set intermediate control point
-                        arrayOfConnectionElements[selected_connector_index].controlPoint[1]  = mousePointInView;
-                }
-            }
-            */
-        
+             if (selected_connector_index != -1)
+             {
+             if (controlpoint1_selected == YES)
+             {
+             // set intermediate control point
+             arrayOfConnectionElements[selected_connector_index].controlPoint[0]  = mousePointInView;
+             swift: Connections[selected_connector_index].controlPoint[0]
+             }
+             else
+             if (controlpoint2_selected == YES)
+             {
+             // set intermediate control point
+             arrayOfConnectionElements[selected_connector_index].controlPoint[1]  = mousePointInView;
+             }
+             }
+             */
+            
             // an element is selected so ...
             if (selected_element_index != -1)
             {
@@ -1207,10 +1417,70 @@ class DrawingView: NSView{
         needsDisplay = true
         //setNeedsDisplayInRect(bounds)
     }
-    
+
+
+
     override func mouseUp(theEvent: NSEvent) {
         
         NSLog("mouseUp")
+        // ---
+        var mousePointInView = theEvent.locationInWindow
+        mousePointInView = convertPoint(mousePointInView, fromView: nil)
+        mousePointInView.x -= frame.origin.x
+        mousePointInView.y -= frame.origin.y
+        
+        // slet snapPointInView:NSPoint    = self.snapToGrid(mousePointInView)
+        
+        switch(selectedTool)
+        {
+        case ARROW_TOOL:
+            if selected_connector_index != -1
+            {
+                if controlpoint1_selected == true
+                {
+                    
+                    //arrayOfConnectionElements[selected_connector_index].controlPoint[0]  = mousePointInView;
+                    Connections[selected_connector_index].controlPoint1  = mousePointInView
+                    
+                    // set back
+                    controlpoint1_selected = false
+                }
+                else
+                if controlpoint2_selected == true
+                {
+                    //arrayOfConnectionElements[selected_connector_index].controlPoint[1]  = mousePointInView;
+                    Connections[selected_connector_index].controlPoint2  = mousePointInView
+                    
+                    // set back
+                    controlpoint2_selected = false
+                }
+            }
+
+            break
+            
+        case CONNECT_TOOL:
+            if startpoint_selected == true
+            {
+                NSLog("startpoint_index=%d startpoint_element=%d",startpoint_index, startpoint_element);
+            }
+            else
+            if endpoint_index > -1 && startpoint_index > -1    // both exist
+            {
+                if endpoint_element != startpoint_element
+                {
+                    NSLog("endpoint_index=%d  endpoint_element=%d",endpoint_index, endpoint_element);
+                        
+                    self.addAConnector()
+                    needsDisplay = true
+                }
+            }
+            break
+            
+        default:
+            break
+        }
+
         needsDisplay = true
     }
+
 }
