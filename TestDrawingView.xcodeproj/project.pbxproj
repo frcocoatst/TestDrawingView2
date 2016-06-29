@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D2CD0851D1ABCA100403AA7 /* NSBezierPath+Arrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D2CD0841D1ABCA100403AA7 /* NSBezierPath+Arrow.swift */; };
 		7D63EF9A1CEDB3E0001B5FE2 /* in.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D63EF991CEDB3E0001B5FE2 /* in.png */; };
 		7D77D6F21CE36241005D19F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77D6F11CE36241005D19F0 /* AppDelegate.swift */; };
 		7D77D6F41CE36241005D19F0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77D6F31CE36241005D19F0 /* ViewController.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7D2CD0841D1ABCA100403AA7 /* NSBezierPath+Arrow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBezierPath+Arrow.swift"; sourceTree = "<group>"; };
 		7D63EF991CEDB3E0001B5FE2 /* in.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = in.png; sourceTree = "<group>"; };
 		7D77D6EE1CE36241005D19F0 /* TestDrawingView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestDrawingView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D77D6F11CE36241005D19F0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				7D77D71C1CE36298005D19F0 /* DrawingView.swift */,
 				7D77D71E1CE362B6005D19F0 /* Connection.swift */,
 				7D77D71F1CE362B7005D19F0 /* Element.swift */,
+				7D2CD0841D1ABCA100403AA7 /* NSBezierPath+Arrow.swift */,
 				7D77D6FA1CE36241005D19F0 /* Info.plist */,
 			);
 			path = TestDrawingView;
@@ -309,6 +312,7 @@
 				7D77D6F41CE36241005D19F0 /* ViewController.swift in Sources */,
 				7D77D6F21CE36241005D19F0 /* AppDelegate.swift in Sources */,
 				7D77D7201CE362B7005D19F0 /* Connection.swift in Sources */,
+				7D2CD0851D1ABCA100403AA7 /* NSBezierPath+Arrow.swift in Sources */,
 				7D77D7211CE362B7005D19F0 /* Element.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
