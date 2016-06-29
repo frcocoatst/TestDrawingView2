@@ -9,7 +9,7 @@
 
 
 //  also: https://gist.github.com/lukaskubanek/1f3585314903dfc66fc7
-//  also:   https://github.com/XavierDK/XDKWalkthrough/blob/master/XDKWalkthroughExemple/XDKWalkthrough/UIBezierPath%2BXDKArrow.m
+//  also: https://github.com/XavierDK/XDKWalkthrough/blob/master/XDKWalkthroughExemple/XDKWalkthrough/UIBezierPath%2BXDKArrow.m
 
 
 import Cocoa
@@ -105,7 +105,7 @@ extension NSBezierPath {
         path.moveToPoint(startPoint)
         path.curveToPoint(endPoint, controlPoint1: controlPoint1, controlPoint2: controlPoint2)
         
-        return path;
+        return path
         
     }
 
@@ -147,13 +147,13 @@ extension NSBezierPath {
         
         // richtungsvektor berechnen
         var vd:NSPoint = NSPoint()
-        vd.x = endPoint.x - controlPoint2.x;
-        vd.y = endPoint.y - controlPoint2.y;
+        vd.x = endPoint.x - controlPoint2.x
+        vd.y = endPoint.y - controlPoint2.y
         
         // normieren
-        // float len = sqrtf( (vd.x * vd.x) + (vd.y * vd.y) );
-        //    vd.x /= len;
-        //    vd.y /= len;
+        // float len = sqrtf( (vd.x * vd.x) + (vd.y * vd.y) )
+        //    vd.x /= len
+        //    vd.y /= len
         let len:CGFloat = CGFloat(hypotf(Float(endPoint.x - controlPoint2.x), Float(endPoint.y - controlPoint2.y)))
         vd.x = vd.x/len
         vd.y = vd.y/len
@@ -164,18 +164,18 @@ extension NSBezierPath {
         triangleBase.y = endPoint.y - ( headLength * vd.y)
         
         // normale
-        let tmp:CGFloat = -vd.x;
-        vd.x = vd.y;
-        vd.y = tmp;
+        let tmp:CGFloat = -vd.x
+        vd.x = vd.y
+        vd.y = tmp
         
         // eckpunkte berechnen
         var pe1:NSPoint = NSPoint()
-        pe1.x = triangleBase.x  - ( headWidth * vd.x);
-        pe1.y = triangleBase.y  - ( headWidth * vd.y);
+        pe1.x = triangleBase.x  - ( headWidth * vd.x)
+        pe1.y = triangleBase.y  - ( headWidth * vd.y)
         
         var pe2:NSPoint = NSPoint()
-        pe2.x = triangleBase.x  + ( headWidth * vd.x);
-        pe2.y = triangleBase.y  + ( headWidth * vd.y);
+        pe2.x = triangleBase.x  + ( headWidth * vd.x)
+        pe2.y = triangleBase.y  + ( headWidth * vd.y)
         
         // dreieck malen
         let triangle = NSBezierPath()
@@ -194,7 +194,7 @@ extension NSBezierPath {
         path.moveToPoint(startPoint)
         path.curveToPoint(endPoint, controlPoint1: controlPoint1, controlPoint2: controlPoint2)
         
-        return path;
+        return path
     }
 
 } // end of extension
