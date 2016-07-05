@@ -19,7 +19,7 @@ let STOREHEIGHT:CGFloat = 40
 let STOREWIDTH :CGFloat = 60
 
 let TRACK_RADIUS:Int = 100
-let GRID_RADIUS:Int = 120
+let GRID_RADIUS:Int = 150
 
 var selectedTool:Int = 0
 var selected_element_index = -1
@@ -935,12 +935,17 @@ class DrawingView: NSView{
                                height: 2*RADIUS)
             
             if NSPointInRect(point, aRect){
+                // security check  -- reset selected connector
+                selected_connector_index = -1
+
                 selected_element_index = index
                 NSLog("selected_element_index =%d",selected_element_index)
                 return true
             }
             
         }
+        // security reset selected element
+        selected_element_index == -1
         return false
     }
     
@@ -1028,12 +1033,15 @@ class DrawingView: NSView{
             
             if NSPointInRect(point, aRect){
                 
+                // security reset selected element
+                selected_element_index = -1
+                
                 selected_connector_index = index
                 NSLog("selected_connector_index =%d",selected_connector_index)
                 return true
             }
         }
-        // security check
+        // security reset selected connector
         selected_connector_index == -1
         return false
     }
@@ -1140,6 +1148,9 @@ class DrawingView: NSView{
     
     /// deleteConnector - delete a connector
     /// - parameter connector_index: index of the connector to be deleted
+    ///
+    /// TBD: if the connector is selected and the Bubble that is source or target of the connector
+    ///      it crashes, as the connector is already removed (by the bubble remove) when trying to delete the connector ...
     ///
     func deleteConnector(connector_index:Int){
         NSLog("deleteConnector connector_index=%d",connector_index)
