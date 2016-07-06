@@ -31,6 +31,41 @@ class TestDrawingViewUITests: XCTestCase {
     func testExample() {
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
+        
+        let window = XCUIApplication().windows["Window"]
+        let checkBox = window.childrenMatchingType(.CheckBox).elementBoundByIndex(1)
+        checkBox.click()
+        
+        let scrollView = window.childrenMatchingType(.ScrollView).element
+        scrollView.click()
+        scrollView.click()
+        
+        let checkBox2 = window.childrenMatchingType(.CheckBox).elementBoundByIndex(4)
+        checkBox2.click()
+        scrollView.click()
+        scrollView.click()
+        checkBox.click()
+        scrollView.click()
+        checkBox2.click()
+        scrollView.click()
+        scrollView.click()
+        scrollView.click()
+        scrollView.click()
+        
+        let checkBox3 = window.childrenMatchingType(.CheckBox).elementBoundByIndex(0)
+        checkBox3.click()
+        checkBox.click()
+        checkBox3.click()
+        scrollView.click()
+        scrollView.click()
+        scrollView.click()
+        scrollView.click()
+        window.childrenMatchingType(.Button).elementBoundByIndex(0).click()
+        checkBox2.click()
+        scrollView.click()
+        scrollView.click()
+        
     }
     
 }
