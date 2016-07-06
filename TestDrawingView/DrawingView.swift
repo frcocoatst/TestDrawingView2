@@ -9,6 +9,10 @@
 import Cocoa
 import Foundation
 
+let unitSize:NSSize  = NSMakeSize(1.0, 1.0)
+
+let LAYOUTSIZE_X:CGFloat = 3000.0
+let LAYOUTSIZE_Y:CGFloat = 2000.0
 
 let WIDTH:CGFloat = 80
 let HEIGHT:CGFloat = 30
@@ -73,10 +77,9 @@ class DrawingView: NSView{
     // blow up contentsize
     override var intrinsicContentSize: NSSize {
         
-        
         NSLog("Zoom = %f intrinsicContentSize = %f %f",zoomfactor, 3000.0*zoomfactor, 2000.0*zoomfactor)
         // tbd.: Fehler bei 0.5
-        return NSMakeSize(3000.0*zoomfactor, 2000.0*zoomfactor)
+        return NSMakeSize(zoomfactor*LAYOUTSIZE_X, zoomfactor*LAYOUTSIZE_Y)
     }
     
     // drawRect
@@ -87,6 +90,7 @@ class DrawingView: NSView{
         //
         super.drawRect(dirtyRect)
         //
+        self.drawGrid()
         self.drawAllElements()
         self.drawAllConnectors()
     }
@@ -108,6 +112,11 @@ class DrawingView: NSView{
         
     }
     
+    func resetScaling()
+    {
+        //[self scaleUnitSquareToSize:[self convertSize:unitSize fromView:nil]];
+        self.scaleUnitSquareToSize(self.convertSize(unitSize, fromView:nil))
+    }
     /// setViewSize - sets the size of the view
     /// - parameter value: size
     ///
@@ -120,6 +129,8 @@ class DrawingView: NSView{
         //      [self scaleUnitSquareToSize:[self convertSize:unitSize fromView:nil]];
         
         // ????? self.scaleUnitSquareToSize (self.convertSize(NSMakeSize(CGFloat(1.0), CGFloat(1.0)), fromView:nil)
+        self.resetScaling()
+        
         // First, match our scaling to the window's coordinate system
         //[self scaleUnitSquareToSize:NSMakeSize(value, value)];
         self.scaleUnitSquareToSize (NSMakeSize(CGFloat(value), CGFloat(value)))
@@ -484,6 +495,32 @@ class DrawingView: NSView{
         
         ConnectionCounter += 1
     }
+    
+    func drawGrid()
+    {//  grid points
+        let path:NSBezierPath = NSBezierPath()
+        
+        for i in 1..<20 {
+            for j in 1..<13 {
+                
+                // TRACK_RADIUS
+                let x_pos = CGFloat(i * GRID_RADIUS)
+                let y_pos = CGFloat(j * GRID_RADIUS)
+                
+                path.removeAllPoints()
+                path.moveToPoint(NSMakePoint(x_pos - 5,y_pos))
+                path.lineToPoint(NSMakePoint(x_pos + 5,y_pos))
+                path.moveToPoint(NSMakePoint(x_pos ,y_pos - 5))
+                path.lineToPoint(NSMakePoint(x_pos ,y_pos + 5))
+                path.lineWidth = 0.1
+                
+                path.stroke()
+                
+            }
+        }
+    }
+    
+
     
     func drawAllConnectors()
     {
