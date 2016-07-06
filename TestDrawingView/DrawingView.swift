@@ -181,13 +181,23 @@ class DrawingView: NSView{
         x = (Int(clickPoint.x) + GRID_RADIUS/2)/GRID_RADIUS
         y = (Int(clickPoint.y) + GRID_RADIUS/2)/GRID_RADIUS
         
+        // omit border points 
+        // TBD calculate from LAYOUTSIZE_X _Y and GRID_RADIUS
         if x==0
         {
             x=1
         }
+        if x==20
+        {
+            x=19
+        }
         if y==0
         {
             y=1
+        }
+        if y==13
+        {
+            y=12
         }
         
         return NSPoint(x:CGFloat(x * GRID_RADIUS), y:CGFloat(y * GRID_RADIUS))
@@ -519,8 +529,6 @@ class DrawingView: NSView{
             }
         }
     }
-    
-
     
     func drawAllConnectors()
     {
