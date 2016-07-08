@@ -25,6 +25,8 @@ let STOREWIDTH :CGFloat = 60
 let TRACK_RADIUS:Int = 100
 let GRID_RADIUS:Int = 150
 
+let TEXTOFFSET:CGFloat = 45
+
 var selectedTool:Int = 0
 var selected_element_index = -1
 var selected_connector_index = -1
@@ -630,22 +632,79 @@ class DrawingView: NSView{
                     apath.stroke()
                 }
                 
-                
-                
-                
-                
                 // show resulting curve
-                
-                
                 mycurve.appendBezierPath(NSBezierPath.curveFromPointtoPointWithcontrolPoints(start, endPoint: end,
                     controlPoint1: controlPoint_1, controlPoint2: controlPoint_2,
                     tailWidth: 1, headWidth: 15, headLength: 15))
                 
-                
-                // Draw the outline
-                // NSColor.blueColor().set()
-                // mycurve.lineWidth = 4
                 mycurve.stroke()
+                
+                // Draw the connector text
+                let hypothenuse:CGFloat = CGFloat(length)  // TBD remove
+                
+                let textPoint:NSPoint = NSMakePoint(end.x - (end.x - start.x)*TEXTOFFSET/hypothenuse,
+                                                    end.y - (end.y - start.y)*TEXTOFFSET/hypothenuse)
+                
+                
+                let text: NSString = c.name + String("\n") + String(format:"%d", c.number) + String(format:"(%d)", index) + String("\n") + c.description
+                
+                let font = NSFont(name: "Menlo", size: 10.0)
+                
+                let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
+                textStyle.alignment = NSTextAlignment.Center
+                textStyle.lineHeightMultiple = 1.2
+                textStyle.lineBreakMode = .ByWordWrapping
+                
+                let textColor = NSColor.blueColor()
+                
+                let textFontAttributes = [
+                    NSFontAttributeName : font!,
+                    NSForegroundColorAttributeName: textColor,
+                    NSParagraphStyleAttributeName: textStyle
+                ]
+                // TBD figure out how big the string is going to be so we can center it
+                // http://stackoverflow.com/questions/24666515/how-do-i-make-an-attributed-string-using-swift
+                
+                let textSize = text.sizeWithAttributes(textFontAttributes)
+                // NSLog("textSize.w=%f .h=%f", textSize.width, textSize.height)
+                
+                var referencePoint:NSPoint = NSMakePoint(0,0)
+                
+                // figure out where to draw the reference - avoiding overlay of line & text
+                if ((end.x - start.x)>=0)
+                {
+                    // left of end point
+                    // subtract referenceSize.width
+                    referencePoint.x = textPoint.x - textSize.width;
+                    if((end.y - start.y)>=0)
+                    {
+                        // above
+                        referencePoint.y  = textPoint.y;
+                    }
+                    else
+                    {
+                        // subtract referenceSize.height
+                        referencePoint.y  = textPoint.y - textSize.height;
+                    }
+                }
+                else
+                {
+                    // right of end point
+                    referencePoint.x  = textPoint.x;
+                    if((end.y - start.y)>=0)
+                    {
+                        // above
+                        referencePoint.y  = textPoint.y;
+                    }
+                    else
+                    {
+                        // subtract referenceSize.height
+                        referencePoint.y  = textPoint.y - textSize.height;
+                    }
+
+                }
+                // finally draw the text
+                text.drawAtPoint(referencePoint, withAttributes: textFontAttributes)
             }
             else
             {
@@ -737,6 +796,7 @@ class DrawingView: NSView{
                 path.stroke()
                 
                 // ------ draw text into the square ------
+                // http://stackoverflow.com/questions/26201844/swift-drawing-text-with-drawinrectwithattributes
                 // let text: NSString = e.name + " \(e.number)"//+ e.description
                 // build a long string with linebreaks
                 let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
