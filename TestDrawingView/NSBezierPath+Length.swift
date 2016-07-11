@@ -21,6 +21,28 @@ extension NSBezierPath {
             
             for i in 0...segments - 1 {
                 let e:NSBezierPathElement = flattenedPath.elementAtIndex(i, associatedPoints: &point)
+                
+                let currPoint = NSStringFromPoint(point)
+                
+                switch (e){
+                case .MoveToBezierPathElement:
+                    NSLog("MoveToBezierPathElement %d %@", i, currPoint)
+                    break
+                    
+                case .LineToBezierPathElement:
+                    NSLog("LineToBezierPathElement %d %@", i, currPoint)
+                    break
+                    
+                case .CurveToBezierPathElement:
+                    NSLog("CurveToBezierPathElement %d %@", i, currPoint)
+                    break
+                    
+                case .ClosePathBezierPathElement:
+                    NSLog("ClosePathBezierPathElement %d %@", i, currPoint)
+                    break
+                }
+                /*
+                */
                 if e == .MoveToBezierPathElement {
                     lastPoint = point
                 } else {
