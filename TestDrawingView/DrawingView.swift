@@ -638,7 +638,7 @@ class DrawingView: NSView{
                     tailWidth: 1, headWidth: 15, headLength: 15))
                 
                 // length category
-                //NSLog("length of bezierpath = %f", mycurve.lenght)
+                // NSLog("---> length of bezierpath = %f", mycurve.lenght)
                 
                 mycurve.stroke()
                 
