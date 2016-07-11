@@ -637,6 +637,9 @@ class DrawingView: NSView{
                     controlPoint1: controlPoint_1, controlPoint2: controlPoint_2,
                     tailWidth: 1, headWidth: 15, headLength: 15))
                 
+                // length category
+                //NSLog("length of bezierpath = %f", mycurve.lenght)
+                
                 mycurve.stroke()
                 
                 // Draw the connector text
