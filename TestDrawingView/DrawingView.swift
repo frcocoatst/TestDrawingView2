@@ -444,6 +444,7 @@ class DrawingView: NSView{
         actualPoint.x = 0.0
         actualPoint.y = -STOREHEIGHT
         cPoints.append(actualPoint)
+    
         
         
         Elements.append(Element(number: ElementCounter,
