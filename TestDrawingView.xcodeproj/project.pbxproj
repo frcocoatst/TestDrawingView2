@@ -18,6 +18,7 @@
 		7D77D71D1CE36298005D19F0 /* DrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77D71C1CE36298005D19F0 /* DrawingView.swift */; };
 		7D77D7201CE362B7005D19F0 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77D71E1CE362B6005D19F0 /* Connection.swift */; };
 		7D77D7211CE362B7005D19F0 /* Element.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77D71F1CE362B7005D19F0 /* Element.swift */; };
+		7D8551101D818CC700909D7A /* Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D85510F1D818CC700909D7A /* Page.swift */; };
 		7D9038F61D338934006209BB /* NSBezierPath+Length.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9038F51D338934006209BB /* NSBezierPath+Length.swift */; };
 		7DD2C3F81CE4AE1F00BD5F39 /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD2C3F01CE4AE1F00BD5F39 /* arrow.png */; };
 		7DD2C3F91CE4AE1F00BD5F39 /* bubble.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD2C3F11CE4AE1F00BD5F39 /* bubble.png */; };
@@ -64,6 +65,7 @@
 		7D77D71C1CE36298005D19F0 /* DrawingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingView.swift; sourceTree = "<group>"; };
 		7D77D71E1CE362B6005D19F0 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		7D77D71F1CE362B7005D19F0 /* Element.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
+		7D85510F1D818CC700909D7A /* Page.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Page.swift; sourceTree = "<group>"; };
 		7D9038F51D338934006209BB /* NSBezierPath+Length.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBezierPath+Length.swift"; sourceTree = "<group>"; };
 		7DD2C3F01CE4AE1F00BD5F39 /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
 		7DD2C3F11CE4AE1F00BD5F39 /* bubble.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bubble.png; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				7D77D71C1CE36298005D19F0 /* DrawingView.swift */,
 				7D77D71E1CE362B6005D19F0 /* Connection.swift */,
 				7D77D71F1CE362B7005D19F0 /* Element.swift */,
+				7D85510F1D818CC700909D7A /* Page.swift */,
 				7D2CD0841D1ABCA100403AA7 /* NSBezierPath+Arrow.swift */,
 				7D9038F51D338934006209BB /* NSBezierPath+Length.swift */,
 				7D77D6FA1CE36241005D19F0 /* Info.plist */,
@@ -313,6 +316,7 @@
 			files = (
 				7D77D71D1CE36298005D19F0 /* DrawingView.swift in Sources */,
 				7D77D6F41CE36241005D19F0 /* ViewController.swift in Sources */,
+				7D8551101D818CC700909D7A /* Page.swift in Sources */,
 				7D77D6F21CE36241005D19F0 /* AppDelegate.swift in Sources */,
 				7D77D7201CE362B7005D19F0 /* Connection.swift in Sources */,
 				7D2CD0851D1ABCA100403AA7 /* NSBezierPath+Arrow.swift in Sources */,

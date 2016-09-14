@@ -56,13 +56,16 @@ let COMBINEDFLOW    = 2
 ///
 class DrawingView: NSView{
     
+    // pages demo http://stackoverflow.com/questions/24378013/struct-array-initialization-in-swift
+    var Pages = [Page]()
+    var PageCounter = 0
     
     // create an array of Element
-    var Elements = [Element]()
-    var ElementCounter = 0
+    //var Elements = [Element]()
+    //var ElementCounter = 0
     
-    var Connections = [Connection]()
-    var ConnectionCounter = 0
+    //var Connections = [Connection]()
+    //var ConnectionCounter = 0
     
     var controlpoint1_selected:Bool = false
     var controlpoint2_selected:Bool = false
@@ -74,6 +77,30 @@ class DrawingView: NSView{
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         
+        /*
+        Pages.append(Page(number: 0,
+            type: 0, name: " ", description: " ",
+            number_elements: 0, Elements: Elements,
+            number_connections: 0, Connections: Connections))
+        */
+        Pages.append(self.createEmptyPage())
+        NSLog("%d",Pages.count)
+        
+    }
+    
+    func createEmptyPage() -> Page{
+    
+        let page:Page = Page( number: -1,
+                              type: -1,
+                              name: "",
+                              description: "",
+                              //
+                              number_elements: 0,           // actual number of elements
+                              Elements:[Element](),         // empty [] array of elements
+                              number_connections: 0,        // actual number of connections
+                              Connections:[Connection]()    // empty[] array of connections
+                            )
+        return page
     }
     
     // blow up contentsize
@@ -231,7 +258,7 @@ class DrawingView: NSView{
             cPoints.append(actualPoint)
         }
         // append a new element to the Elements array
-        Elements.append(Element(number: ElementCounter,
+        Pages[0].Elements.append(Element(number: Pages[0].number_elements,
             type: TYPE_BUBBLE,
             name: "short name",
             description: "long bubble description",
@@ -239,7 +266,13 @@ class DrawingView: NSView{
             number_connectionPoint: 12,
             connectionPoints: cPoints))
         // increase counter
-        ElementCounter += 1
+        //ElementCounter += 1
+        
+        Pages[0].number_elements += 1   // Update number_elements
+        
+        NSLog("Pages[0].Elements --> \(Pages[0].Elements[0].name) \(Pages[0].Elements[0].number)")
+        /*
+         */
     }
     
     /// addASquare - adds a square at a certain location
@@ -306,7 +339,7 @@ class DrawingView: NSView{
         cPoints.append(actualPoint)
         
         // append a new element to the Elements array
-        Elements.append(Element(number: ElementCounter,
+        Pages[0].Elements.append(Element(number: Pages[0].number_elements,
             type: TYPE_TERMINATOR,
             name: "short name",
             description: "long terminator description",
@@ -314,7 +347,10 @@ class DrawingView: NSView{
             number_connectionPoint: 12,
             connectionPoints: cPoints))
         
-        ElementCounter += 1
+        Pages[0].number_elements += 1   // Update number_elements
+        
+        NSLog("Pages[0].Elements --> \(Pages[0].Elements[0].name) \(Pages[0].Elements[0].number)")
+
     }
     
     /// addAStore - adds a store at a certain location
@@ -363,7 +399,7 @@ class DrawingView: NSView{
         cPoints.append(actualPoint)
         
         
-        Elements.append(Element(number: ElementCounter,
+        Pages[0].Elements.append(Element(number: Pages[0].number_elements,
             type: TYPE_STORE,
             name: "short name",
             description: "long store description",
@@ -371,7 +407,10 @@ class DrawingView: NSView{
             number_connectionPoint: 10,
             connectionPoints: cPoints))
         
-        ElementCounter += 1
+        
+        Pages[0].number_elements += 1   // Update number_elements
+        
+        NSLog("Pages[0].Elements --> \(Pages[0].Elements[0].name) \(Pages[0].Elements[0].number)")
     }
     
     /// addAInput - adds a input at a certain location
@@ -393,7 +432,7 @@ class DrawingView: NSView{
             cPoints.append(actualPoint)
         }
         
-        Elements.append(Element(number: ElementCounter,
+        Pages[0].Elements.append(Element(number: Pages[0].number_elements,
             type: TYPE_INPUT,
             name: "short name",
             description: "long input description",
@@ -401,7 +440,9 @@ class DrawingView: NSView{
             number_connectionPoint: 6,
             connectionPoints: cPoints))
         
-        ElementCounter += 1
+        Pages[0].number_elements += 1   // Update number_elements
+        
+        NSLog("Pages[0].Elements --> \(Pages[0].Elements[0].name) \(Pages[0].Elements[0].number)")
     }
     
     /// addAState - adds a state at a certain location
@@ -447,7 +488,7 @@ class DrawingView: NSView{
     
         
         
-        Elements.append(Element(number: ElementCounter,
+        Pages[0].Elements.append(Element(number: Pages[0].number_elements,
             type: TYPE_STATE,
             name: "short name",
             description: "long bubble description",
@@ -455,26 +496,31 @@ class DrawingView: NSView{
             number_connectionPoint: 12,
             connectionPoints: cPoints))
         
-        ElementCounter += 1
+        Pages[0].number_elements += 1   // Update number_elements
+        
+        NSLog("Pages[0].Elements --> \(Pages[0].Elements[0].name) \(Pages[0].Elements[0].number)")
     }
     
     
     
     func addAConnector()
     {
-        NSLog("addAConnector: ConnectionCounter=%d", ConnectionCounter)
+        NSLog("addAConnector: ConnectionCounter=%d", Pages[0].number_connections)
         
         // add control points
         var controlPoint_1 = NSPoint()
         var controlPoint_2 = NSPoint()
         var labelPoint = NSPoint()
         
-        let start:NSPoint = NSPoint(x:Elements[startpoint_element].location.x + Elements[startpoint_element].connectionPoints[startpoint_index].x,
-            y: Elements[startpoint_element].location.y + Elements[startpoint_element].connectionPoints[startpoint_index].y)
+        let start:NSPoint = NSPoint(x:Pages[0].Elements[startpoint_element].location.x +
+                                      Pages[0].Elements[startpoint_element].connectionPoints[startpoint_index].x,
+                                    y:Pages[0].Elements[startpoint_element].location.y +
+                                      Pages[0].Elements[startpoint_element].connectionPoints[startpoint_index].y)
         
-        let end:NSPoint   = NSPoint(x:Elements[endpoint_element].location.x +
-            Elements[endpoint_element].connectionPoints[endpoint_index].x,
-            y:Elements[endpoint_element].location.y + Elements[endpoint_element].connectionPoints[endpoint_index].y)
+        let end:NSPoint   = NSPoint(x:Pages[0].Elements[endpoint_element].location.x +
+                                      Pages[0].Elements[endpoint_element].connectionPoints[endpoint_index].x,
+                                    y:Pages[0].Elements[endpoint_element].location.y +
+                                      Pages[0].Elements[endpoint_element].connectionPoints[endpoint_index].y)
         
         let length:Float = hypotf(Float(end.x - start.x), Float(end.y - start.y))
         
@@ -493,7 +539,7 @@ class DrawingView: NSView{
             labelPoint = start
         }
         
-        Connections.append(Connection(number:ConnectionCounter,
+        Pages[0].Connections.append(Connection(number:Pages[0].number_connections,
             type:DATAFLOW,
             name: "flow name",
             description: "long flow description",
@@ -506,7 +552,22 @@ class DrawingView: NSView{
             labelPoint: labelPoint
             ))
         
-        ConnectionCounter += 1
+        Pages[0].number_connections += 1     // Update number_connections
+        
+        // Demo Printout
+        for i in 0..<Pages[0].number_connections            // out of range ???? 
+        {
+            NSLog("Pages[0].Connections[%d] -> \(Pages[0].Connections[i].name) \(Pages[0].Connections[i].number)",i)
+        }
+        
+        // -------------------
+        // Modification tryout
+        Pages[0].Connections[0].number = 11
+        Pages[0].Connections[0].name = "flow name modified"
+        Pages[0].Connections[0].description = "modified"
+        // NSLog("Pages[0].Connections[0] --> \(Pages[0].Connections[0].name) \(Pages[0].Connections[0].number)")
+
+
     }
     
     func drawGrid()
@@ -544,7 +605,7 @@ class DrawingView: NSView{
         
         //NSLog("drawAllConnectors")
         
-        for (index,c) in Connections.enumerate(){
+        for (index,c) in Pages[0].Connections.enumerate(){
             
             if ((selected_connector_index != -1) && (selected_connector_index == index))
             {
@@ -559,11 +620,15 @@ class DrawingView: NSView{
             let element_end:Int     = c.endPoint_number
             let conn_end:Int        = c.endPoint_connectionPoint
             
-            let start:NSPoint = NSPoint(x:(Elements[element_start].location.x + Elements[element_start].connectionPoints[conn_start].x),
-                                        y:(Elements[element_start].location.y + Elements[element_start].connectionPoints[conn_start].y))
+            let start:NSPoint = NSPoint(x:(Pages[0].Elements[element_start].location.x +
+                                           Pages[0].Elements[element_start].connectionPoints[conn_start].x),
+                                        y:(Pages[0].Elements[element_start].location.y +
+                                           Pages[0].Elements[element_start].connectionPoints[conn_start].y))
             
-            let end:NSPoint   = NSPoint(x:(Elements[element_end].location.x + Elements[element_end].connectionPoints[conn_end].x),
-                                        y:(Elements[element_end].location.y + Elements[element_end].connectionPoints[conn_end].y))
+            let end:NSPoint   = NSPoint(x:(Pages[0].Elements[element_end].location.x +
+                                           Pages[0].Elements[element_end].connectionPoints[conn_end].x),
+                                        y:(Pages[0].Elements[element_end].location.y +
+                                           Pages[0].Elements[element_end].connectionPoints[conn_end].y))
             
             let length:Float = hypotf(Float(end.x - start.x),Float(end.y - start.y))
             
@@ -578,15 +643,19 @@ class DrawingView: NSView{
                 {
                     var aRect:NSRect=NSRect() //
                     
-                    aRect.origin.x    = Elements[element_start].location.x +
-                        Elements[element_start].connectionPoints[conn_start].x +
-                        (Elements[element_end].location.x + Elements[element_end].connectionPoints[conn_end].x -
-                            Elements[element_start].location.x - Elements[element_start].connectionPoints[conn_start].x)/2
+                    aRect.origin.x    = Pages[0].Elements[element_start].location.x +
+                                        Pages[0].Elements[element_start].connectionPoints[conn_start].x +
+                                       (Pages[0].Elements[element_end].location.x +
+                                        Pages[0].Elements[element_end].connectionPoints[conn_end].x -
+                                        Pages[0].Elements[element_start].location.x -
+                                        Pages[0].Elements[element_start].connectionPoints[conn_start].x)/2
                     
-                    aRect.origin.y    = Elements[element_start].location.y +
-                        Elements[element_start].connectionPoints[conn_start].y +
-                        (Elements[element_end].location.y + Elements[element_end].connectionPoints[conn_end].y -
-                            Elements[element_start].location.y - Elements[element_start].connectionPoints[conn_start].y)/2
+                    aRect.origin.y    = Pages[0].Elements[element_start].location.y +
+                                        Pages[0].Elements[element_start].connectionPoints[conn_start].y +
+                                       (Pages[0].Elements[element_end].location.y +
+                                        Pages[0].Elements[element_end].connectionPoints[conn_end].y -
+                                        Pages[0].Elements[element_start].location.y -
+                                        Pages[0].Elements[element_start].connectionPoints[conn_start].y)/2
                     
                     aRect.origin.x    = aRect.origin.x - CONNRADIUS
                     aRect.origin.y    = aRect.origin.y - CONNRADIUS
@@ -709,6 +778,9 @@ class DrawingView: NSView{
                 }
                 // finally draw the text
                 text.drawAtPoint(referencePoint, withAttributes: textFontAttributes)
+                //
+                // TBD var labelPoint:  NSPoint  // point where the label is placed TBD ???
+                //
             }
             else
             {
@@ -728,7 +800,7 @@ class DrawingView: NSView{
         // selected_element_index = 2  // change this done in testSelectElementInRect
         //NSLog("drawAllElements")
         
-        for (index,e) in Elements.enumerate(){
+        for (index,e) in Pages[0].Elements.enumerate(){
             
             //NSLog("drawAllElements: index=%d",index)
             
@@ -1037,7 +1109,7 @@ class DrawingView: NSView{
     ///
     func testSelectElementInRect(point:NSPoint) -> Bool{
         
-        for (index,e) in Elements.enumerate(){
+        for (index,e) in Pages[0].Elements.enumerate(){
             let aRect = NSRect(x: e.location.x - RADIUS,
                                y: e.location.y - RADIUS,
                                width: 2*RADIUS,
@@ -1072,8 +1144,8 @@ class DrawingView: NSView{
         // TBD possibly relative corrordinates add Connections[selected_connector_index].location.x .y ???
         
         // get the controlpoints
-        let controlPoint_1 : NSPoint = Connections[selected_connector_index].controlPoint1
-        let controlPoint_2 : NSPoint = Connections[selected_connector_index].controlPoint2
+        let controlPoint_1 : NSPoint = Pages[0].Connections[selected_connector_index].controlPoint1
+        let controlPoint_2 : NSPoint = Pages[0].Connections[selected_connector_index].controlPoint2
         
         // test if controlpoint1 is selected
         let aRect = NSRect(x: controlPoint_1.x - SELECTRADIUS,
@@ -1115,7 +1187,7 @@ class DrawingView: NSView{
         
         // test if any connector is selected
         // enumerate over all connectors
-        for (index,c) in Connections.enumerate(){
+        for (index,c) in Pages[0].Connections.enumerate(){
             
             startPoint_number = c.startPoint_number
             startPoint_connectionPoint = c.startPoint_connectionPoint
@@ -1125,15 +1197,19 @@ class DrawingView: NSView{
             var aRect:NSRect=NSRect() // TBD: possibly add e.location.x and e.location.y
             
             //
-            aRect.origin.x    = Elements[startPoint_number].location.x +
-                Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].x +
-                (Elements[endPoint_number].location.x + Elements[endPoint_number].connectionPoints[endPoint_connectionPoint].x -
-                 Elements[startPoint_number].location.x - Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].x)/2
+            aRect.origin.x    = Pages[0].Elements[startPoint_number].location.x +
+                                Pages[0].Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].x +
+                               (Pages[0].Elements[endPoint_number].location.x +
+                                Pages[0].Elements[endPoint_number].connectionPoints[endPoint_connectionPoint].x -
+                                Pages[0].Elements[startPoint_number].location.x -
+                                Pages[0].Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].x)/2
             
-            aRect.origin.y    = Elements[startPoint_number].location.y +
-                Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].y +
-                (Elements[endPoint_number].location.y + Elements[endPoint_number].connectionPoints[endPoint_connectionPoint].y -
-                 Elements[startPoint_number].location.y - Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].y)/2
+            aRect.origin.y    = Pages[0].Elements[startPoint_number].location.y +
+                                Pages[0].Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].y +
+                               (Pages[0].Elements[endPoint_number].location.y +
+                                Pages[0].Elements[endPoint_number].connectionPoints[endPoint_connectionPoint].y -
+                                Pages[0].Elements[startPoint_number].location.y -
+                                Pages[0].Elements[startPoint_number].connectionPoints[startPoint_connectionPoint].y)/2
             
             aRect.origin.x    = aRect.origin.x - CONNRADIUS
             aRect.origin.y    = aRect.origin.y - CONNRADIUS
@@ -1162,7 +1238,7 @@ class DrawingView: NSView{
     func testPointInConnector(point:NSPoint) -> Bool{
         
         // enumerate over all elements
-        for (index,e) in Elements.enumerate(){
+        for (index,e) in Pages[0].Elements.enumerate(){
             
             // iterate over all connectionPoints
             for (cindex,cp) in e.connectionPoints.enumerate(){
@@ -1229,27 +1305,28 @@ class DrawingView: NSView{
     ///
     func deleteElement(element_index:Int){
         NSLog("deleteElement element_index=%d",element_index)
-        Elements.removeAtIndex(element_index)
+        Pages[0].Elements.removeAtIndex(element_index)
         
         // search in Connectors for in/out connections with the actual element
         // see http://stackoverflow.com/questions/28323848/removing-from-array-during-enumeration-in-swift
-        for (index,c) in Connections.enumerate().reverse(){
+        for (index,c) in Pages[0].Connections.enumerate().reverse(){
             if c.startPoint_number == element_index || c.endPoint_number == element_index{
-                Connections.removeAtIndex(index)
+                Pages[0].Connections.removeAtIndex(index)
+                Pages[0].number_connections -= 1  // ???
             }
         }
         
         // correct references to the elements where the connections are made
-        for (index,c) in Connections.enumerate()
+        for (index,c) in Pages[0].Connections.enumerate()
         {
             if c.startPoint_number > element_index
             {
-                Connections[index].startPoint_number = c.startPoint_number - 1
+                Pages[0].Connections[index].startPoint_number = c.startPoint_number - 1
             }
             
             if c.endPoint_number > element_index
             {
-                Connections[index].endPoint_number = c.endPoint_number - 1
+                Pages[0].Connections[index].endPoint_number = c.endPoint_number - 1
             }
         }
         
@@ -1263,14 +1340,28 @@ class DrawingView: NSView{
     ///
     func deleteConnector(connector_index:Int){
         NSLog("deleteConnector connector_index=%d",connector_index)
-        Connections.removeAtIndex(connector_index)
+        Pages[0].Connections.removeAtIndex(connector_index)
         //
+        Pages[0].number_connections -= 1  // ???
     }
     
     override func mouseDown(theEvent: NSEvent) {
         super.mouseDown(theEvent)
         //
         NSLog("mouseDown")
+        
+        // check additional modifiers
+        let modifierFlags = theEvent.modifierFlags;
+        //if (modifierFlags.contains(.ControlKeyMask))
+        //if (modifierFlags.contains(.AlternateKeyMask))
+        if (modifierFlags.contains(.CommandKeyMask))
+        {
+            if let menu = self.menuForEvent(theEvent)
+            {
+                NSMenu.popUpContextMenu(menu, withEvent:theEvent, forView:self);
+            }
+        }
+
         
         var mousePointInView = theEvent.locationInWindow
         mousePointInView = convertPoint(mousePointInView, fromView: nil)
@@ -1386,6 +1477,34 @@ class DrawingView: NSView{
         
     }
     
+    // see http://younata.github.io/2015/08/14/osx-programming-programmatic-menu-buttons/
+    
+    override func menuForEvent(event: NSEvent) -> NSMenu? {
+        
+        let menu = NSMenu(title: "Context Menu")
+        
+        let menuItem = NSMenuItem(title: "Information", action: #selector(DrawingView.didSelectMenuItem(_:)), keyEquivalent: "")
+        menuItem.target = self
+        menu.addItem(menuItem)
+        
+        menu.addItem(NSMenuItem(title: "Context1", action: #selector(DrawingView.context1(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separatorItem())
+        menu.addItem(NSMenuItem(title: "Context2", action: #selector(DrawingView.context2(_:)), keyEquivalent: "e"))
+        
+        return menu
+    }
+    
+    func didSelectMenuItem(menuItem: NSMenuItem) {
+        NSLog("Selected menu item \(menuItem)")
+    }
+    func context1(menuItem: NSMenuItem) {
+        NSLog("Context1 selected menu item \(menuItem)")
+    }
+    func context2(menuItem: NSMenuItem) {
+        NSLog("Context2 selected menu item \(menuItem)")
+    }
+
+    
     override func mouseDragged(theEvent: NSEvent) {
         super.mouseDragged(theEvent)
         
@@ -1425,7 +1544,7 @@ class DrawingView: NSView{
                 // ... change the position
                 let snapedmousePoint:NSPoint = self.snapToGrid(mousePointInView)
                 // ... and store it to the selected element
-                Elements[selected_element_index].location = snapedmousePoint
+                Pages[0].Elements[selected_element_index].location = snapedmousePoint
             }
             break
             
@@ -1459,7 +1578,7 @@ class DrawingView: NSView{
                 {
                     
                     //arrayOfConnectionElements[selected_connector_index].controlPoint[0]  = mousePointInView;
-                    Connections[selected_connector_index].controlPoint1  = mousePointInView
+                    Pages[0].Connections[selected_connector_index].controlPoint1  = mousePointInView
                     
                     // set back
                     controlpoint1_selected = false
@@ -1468,7 +1587,7 @@ class DrawingView: NSView{
                 if controlpoint2_selected == true
                 {
                     //arrayOfConnectionElements[selected_connector_index].controlPoint[1]  = mousePointInView;
-                    Connections[selected_connector_index].controlPoint2  = mousePointInView
+                    Pages[0].Connections[selected_connector_index].controlPoint2  = mousePointInView
                     
                     // set back
                     controlpoint2_selected = false
