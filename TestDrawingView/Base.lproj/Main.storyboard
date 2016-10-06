@@ -822,7 +822,7 @@
                                     <rect key="frame" x="1" y="362" width="569" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="H9r-I5-RW2">
+                                <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="0.98962782184258691" horizontal="NO" id="H9r-I5-RW2">
                                     <rect key="frame" x="570" y="1" width="15" height="361"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
