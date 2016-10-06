@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15G1004" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -805,16 +805,24 @@
                                     <rect key="frame" x="1" y="1" width="569" height="361"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e9y-z1-07Q" customClass="DrawingView" customModule="TestDrawingView" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="569" height="361"/>
+                                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="e9y-z1-07Q" customClass="DrawingView" customModule="TestDrawingView" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="3000" height="2000"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="3000" id="2oo-K1-sJg"/>
+                                                <constraint firstAttribute="height" constant="2000" id="LSB-xa-yxA"/>
+                                            </constraints>
                                         </customView>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="e9y-z1-07Q" secondAttribute="bottom" id="UKL-cp-tp0"/>
+                                        <constraint firstItem="e9y-z1-07Q" firstAttribute="leading" secondItem="e1P-XZ-MVf" secondAttribute="leading" id="eou-1w-a2J"/>
+                                    </constraints>
                                 </clipView>
                                 <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="Iiy-sU-FSh">
                                     <rect key="frame" x="1" y="362" width="569" height="15"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="H9r-I5-RW2">
+                                <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="H9r-I5-RW2">
                                     <rect key="frame" x="570" y="1" width="15" height="361"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>

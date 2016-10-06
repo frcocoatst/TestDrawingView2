@@ -111,13 +111,14 @@ class DrawingView: NSView{
         return NSMakeSize(zoomfactor*LAYOUTSIZE_X, zoomfactor*LAYOUTSIZE_Y)
     }
     
+    
     // drawRect
-    override func drawRect(dirtyRect: NSRect)
+    override func draw(_ dirtyRect: NSRect)
     {
-        NSColor.whiteColor().setFill()
+        NSColor.white.setFill()
         NSRectFill(self.bounds)
         //
-        super.drawRect(dirtyRect)
+        super.draw(dirtyRect)
         //
         self.drawGrid()
         self.drawAllElements()
@@ -136,20 +137,34 @@ class DrawingView: NSView{
     /// setBubbleOrConnectorName - sets the name
     /// - parameter text: name
     ///
-    func setBubbleOrConnectorName(text: NSString){
+    func setBubbleOrConnectorName(_ text: NSString){
         NSLog("setBubbleOrConnectorName = %@",text)
+        // check what is selected and
+        // change c.description or e.description
+        if  selected_element_index != -1
+        {
+            Pages[0].Elements[selected_element_index].description = text as String
+        }
         
+        
+        if selected_connector_index != -1
+        {
+            Pages[0].Connections[selected_connector_index].description = text as String
+        }
+        
+        // redraw
+         needsDisplay = true
     }
     
     func resetScaling()
     {
         //[self scaleUnitSquareToSize:[self convertSize:unitSize fromView:nil]];
-        self.scaleUnitSquareToSize(self.convertSize(unitSize, fromView:nil))
+        self.scaleUnitSquare(to: self.convert(unitSize, from:nil))
     }
     /// setViewSize - sets the size of the view
     /// - parameter value: size
     ///
-    func setViewSize(value:Double)
+    func setViewSize(_ value:Double)
     {
         NSLog("setViewSize = %f",value)
         //[self resetScaling]; is:
@@ -162,7 +177,7 @@ class DrawingView: NSView{
         
         // First, match our scaling to the window's coordinate system
         //[self scaleUnitSquareToSize:NSMakeSize(value, value)];
-        self.scaleUnitSquareToSize (NSMakeSize(CGFloat(value), CGFloat(value)))
+        self.scaleUnitSquare (to: NSMakeSize(CGFloat(value), CGFloat(value)))
         zoomfactor = CGFloat(value)
         
         // Then, set the scale.
@@ -175,7 +190,7 @@ class DrawingView: NSView{
     /// setSelectedTool - sets the size of the view
     /// - parameter tool: selected tool
     ///
-    func setSelectedTool(tool:Int)
+    func setSelectedTool(_ tool:Int)
     {
         NSLog("setSelectedTool in DrawingView with tool: %d",tool)
         //   ARROW_TOOL,BUBBLE_TOOL,TERMINATOR_TOOL,STORE_TOOL,CONNECT_TOOL,DOT_TOOL,DELETE_TOOL
@@ -202,7 +217,7 @@ class DrawingView: NSView{
     /// snapToGrid - sets the clickPoint to a gridPoint
     /// - parameter clickPoint: clickpoint
     /// - returns: nearest gridpoint
-    func snapToGrid(clickPoint:NSPoint) -> NSPoint{
+    func snapToGrid(_ clickPoint:NSPoint) -> NSPoint{
         //var snapPoint:NSPoint
         var x:Int
         var y:Int
@@ -239,7 +254,7 @@ class DrawingView: NSView{
     /// - parameter atPoint: point where to add
     ///
      */
-    func addABubble(atPoint:NSPoint)
+    func addABubble(_ atPoint:NSPoint)
     {
         let π = M_PI
         // snap to grid
@@ -278,7 +293,7 @@ class DrawingView: NSView{
     /// addASquare - adds a square at a certain location
     /// - parameter atPoint: point where to add
     ///
-    func addASquare(atPoint:NSPoint)
+    func addASquare(_ atPoint:NSPoint)
     {
         // snap to grid
         let snapedmousePoint:NSPoint = self.snapToGrid(atPoint)
@@ -356,7 +371,7 @@ class DrawingView: NSView{
     /// addAStore - adds a store at a certain location
     /// - parameter atPoint: point where to add
     ///
-    func addAStore(atPoint:NSPoint)
+    func addAStore(_ atPoint:NSPoint)
     {
         // snap to grid
         let snapedmousePoint:NSPoint = self.snapToGrid(atPoint)
@@ -416,7 +431,7 @@ class DrawingView: NSView{
     /// addAInput - adds a input at a certain location
     /// - parameter atPoint: point where to add
     ///
-    func addAInput(atPoint:NSPoint)
+    func addAInput(_ atPoint:NSPoint)
     {
         let π = M_PI
         let snapedmousePoint:NSPoint = self.snapToGrid(atPoint)
@@ -448,7 +463,7 @@ class DrawingView: NSView{
     /// addAState - adds a state at a certain location
     /// - parameter atPoint: point where to add
     ///
-    func addAState(atPoint:NSPoint)
+    func addAState(_ atPoint:NSPoint)
     {
         let snapedmousePoint:NSPoint = self.snapToGrid(atPoint)
         
@@ -560,13 +575,13 @@ class DrawingView: NSView{
             NSLog("Pages[0].Connections[%d] -> \(Pages[0].Connections[i].name) \(Pages[0].Connections[i].number)",i)
         }
         
-        // -------------------
+        /* -------------------
         // Modification tryout
         Pages[0].Connections[0].number = 11
         Pages[0].Connections[0].name = "flow name modified"
         Pages[0].Connections[0].description = "modified"
         // NSLog("Pages[0].Connections[0] --> \(Pages[0].Connections[0].name) \(Pages[0].Connections[0].number)")
-
+         */
 
     }
     
@@ -582,10 +597,10 @@ class DrawingView: NSView{
                 let y_pos = CGFloat(j * GRID_RADIUS)
                 
                 path.removeAllPoints()
-                path.moveToPoint(NSMakePoint(x_pos - 5,y_pos))
-                path.lineToPoint(NSMakePoint(x_pos + 5,y_pos))
-                path.moveToPoint(NSMakePoint(x_pos ,y_pos - 5))
-                path.lineToPoint(NSMakePoint(x_pos ,y_pos + 5))
+                path.move(to: NSMakePoint(x_pos - 5,y_pos))
+                path.line(to: NSMakePoint(x_pos + 5,y_pos))
+                path.move(to: NSMakePoint(x_pos ,y_pos - 5))
+                path.line(to: NSMakePoint(x_pos ,y_pos + 5))
                 path.lineWidth = 0.1
                 
                 path.stroke()
@@ -605,15 +620,15 @@ class DrawingView: NSView{
         
         //NSLog("drawAllConnectors")
         
-        for (index,c) in Pages[0].Connections.enumerate(){
+        for (index,c) in Pages[0].Connections.enumerated(){
             
             if ((selected_connector_index != -1) && (selected_connector_index == index))
             {
-                NSColor.redColor().set()
+                NSColor.red.set()
             }
             else
             {
-                NSColor.greenColor().set()
+                NSColor.green.set()
             }
             let element_start:Int   = c.startPoint_number
             let conn_start:Int      = c.startPoint_connectionPoint
@@ -663,7 +678,7 @@ class DrawingView: NSView{
                     aRect.size.height = 2*CONNRADIUS
                     
                     apath.removeAllPoints()
-                    apath.appendBezierPathWithOvalInRect(aRect)
+                    apath.appendOval(in: aRect)
                     apath.lineWidth = 1
                     apath.stroke()
                 }
@@ -677,7 +692,7 @@ class DrawingView: NSView{
                     dotRect.size.height = 2 * CONNRADIUS
                     
                     apath.removeAllPoints()
-                    apath.appendBezierPathWithOvalInRect(dotRect)
+                    apath.appendOval(in: dotRect)
                     apath.lineWidth = 1
                     apath.stroke()
                     
@@ -686,24 +701,25 @@ class DrawingView: NSView{
                     dotRect.size.width  = 2 * CONNRADIUS
                     dotRect.size.height = 2 * CONNRADIUS
                     
-                    apath.appendBezierPathWithOvalInRect(dotRect)
+                    apath.appendOval(in: dotRect)
                     apath.lineWidth = 1
                     apath.stroke()
                 }
                 if (selected_connector_index == index)
                 {
                     apath.removeAllPoints()
-                    apath.moveToPoint(start)
-                    apath.lineToPoint(controlPoint_1)
+                    apath.move(to: start)
+                    apath.line(to: controlPoint_1)
                     apath.stroke()
                     
-                    apath.moveToPoint(end)
-                    apath.lineToPoint(controlPoint_2)
+                    apath.move(to: end)
+                    apath.line(to: controlPoint_2)
                     apath.stroke()
                 }
                 
                 // show resulting curve
-                mycurve.appendBezierPath(NSBezierPath.curveFromPointtoPointWithcontrolPoints(start, endPoint: end,
+                // mycurve.append
+                mycurve.append(NSBezierPath.curveFromPointtoPointWithcontrolPoints(start, endPoint: end,
                     controlPoint1: controlPoint_1, controlPoint2: controlPoint_2,
                     tailWidth: 1, headWidth: 15, headLength: 15))
                 
@@ -719,16 +735,16 @@ class DrawingView: NSView{
                                                     end.y - (end.y - start.y)*TEXTOFFSET/hypothenuse)
                 
                 
-                let text: NSString = c.name + String("\n") + String(format:"%d", c.number) + String(format:"(%d)", index) + String("\n") + c.description
+                let text: String = c.name + String("\n") + String(format:"%d", c.number) + String(format:"(%d)", index) + String("\n") + c.description
                 
                 let font = NSFont(name: "Menlo", size: 10.0)
                 
-                let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
-                textStyle.alignment = NSTextAlignment.Center
+                let textStyle = NSMutableParagraphStyle.default().mutableCopy() as! NSMutableParagraphStyle
+                textStyle.alignment = NSTextAlignment.center
                 textStyle.lineHeightMultiple = 1.2
-                textStyle.lineBreakMode = .ByWordWrapping
+                textStyle.lineBreakMode = .byWordWrapping
                 
-                let textColor = NSColor.blueColor()
+                let textColor = NSColor.blue
                 
                 let textFontAttributes = [
                     NSFontAttributeName : font!,
@@ -738,7 +754,7 @@ class DrawingView: NSView{
                 // TBD figure out how big the string is going to be so we can center it
                 // http://stackoverflow.com/questions/24666515/how-do-i-make-an-attributed-string-using-swift
                 
-                let textSize = text.sizeWithAttributes(textFontAttributes)
+                let textSize = text.size(withAttributes: textFontAttributes)
                 // NSLog("textSize.w=%f .h=%f", textSize.width, textSize.height)
                 
                 var referencePoint:NSPoint = NSMakePoint(0,0)
@@ -777,7 +793,7 @@ class DrawingView: NSView{
 
                 }
                 // finally draw the text
-                text.drawAtPoint(referencePoint, withAttributes: textFontAttributes)
+                text.draw(at: referencePoint, withAttributes: textFontAttributes)
                 //
                 // TBD var labelPoint:  NSPoint  // point where the label is placed TBD ???
                 //
@@ -800,7 +816,7 @@ class DrawingView: NSView{
         // selected_element_index = 2  // change this done in testSelectElementInRect
         //NSLog("drawAllElements")
         
-        for (index,e) in Pages[0].Elements.enumerate(){
+        for (index,e) in Pages[0].Elements.enumerated(){
             
             //NSLog("drawAllElements: index=%d",index)
             
@@ -808,12 +824,12 @@ class DrawingView: NSView{
             
             if ((selected_element_index != -1) && (selected_element_index == index))
             {
-                NSColor.redColor().set()
+                NSColor.red.set()
                 path.lineWidth = 5.0
             }
             else
             {
-                NSColor.blackColor().set()
+                NSColor.black.set()
                 path.lineWidth = 2.0
             }
             
@@ -829,31 +845,31 @@ class DrawingView: NSView{
                                   width: 2*RADIUS,
                                   height: 2*RADIUS)
                 
-                path.appendBezierPathWithOvalInRect(rect)
+                path.appendOval(in: rect)
                 
                 path.stroke()
                 
                 // ------ draw text into the circle ------
                 // let text: NSString = e.name + " \(e.number)"//+ e.description
                 // build a long string with linebreaks
-                let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
+                let text: String = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
                 
                 let font = NSFont(name: "Menlo", size: 10.0)
                 
-                let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
-                textStyle.alignment = NSTextAlignment.Center
+                let textStyle = NSMutableParagraphStyle.default().mutableCopy() as! NSMutableParagraphStyle
+                textStyle.alignment = NSTextAlignment.center
                 textStyle.lineHeightMultiple = 1.2
-                textStyle.lineBreakMode = .ByWordWrapping
+                textStyle.lineBreakMode = .byWordWrapping
                 
                 //let textColor = NSColor(calibratedRed: 0.147, green: 0.222, blue: 0.162, alpha: 1.0)
-                let textColor = NSColor.blueColor()
+                let textColor = NSColor.blue
                 
                 let textFontAttributes = [
                     NSFontAttributeName : font!,
                     NSForegroundColorAttributeName: textColor,
                     NSParagraphStyleAttributeName: textStyle
                 ]
-                text.drawInRect(NSOffsetRect(rect, 0, -10), withAttributes: textFontAttributes)
+                text.draw(in: NSOffsetRect(rect, 0, -10), withAttributes: textFontAttributes)
                 
             }
             else if e.type == TYPE_TERMINATOR
@@ -867,7 +883,7 @@ class DrawingView: NSView{
                                   width: 2*RADIUS,
                                   height: 2*RADIUS)
                 
-                path.appendBezierPathWithRect(rect)
+                path.appendRect(rect)
                 
                 path.stroke()
                 
@@ -875,24 +891,24 @@ class DrawingView: NSView{
                 // http://stackoverflow.com/questions/26201844/swift-drawing-text-with-drawinrectwithattributes
                 // let text: NSString = e.name + " \(e.number)"//+ e.description
                 // build a long string with linebreaks
-                let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
+                let text: String = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
                 
                 let font = NSFont(name: "Menlo", size: 10.0)
                 
-                let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
-                textStyle.alignment = NSTextAlignment.Center
+                let textStyle = NSMutableParagraphStyle.default().mutableCopy() as! NSMutableParagraphStyle
+                textStyle.alignment = NSTextAlignment.center
                 textStyle.lineHeightMultiple = 1.2
-                textStyle.lineBreakMode = .ByWordWrapping
+                textStyle.lineBreakMode = .byWordWrapping
                 
                 //let textColor = NSColor(calibratedRed: 0.147, green: 0.222, blue: 0.162, alpha: 1.0)
-                let textColor = NSColor.blueColor()
+                let textColor = NSColor.blue
                 
                 let textFontAttributes = [
                     NSFontAttributeName : font!,
                     NSForegroundColorAttributeName: textColor,
                     NSParagraphStyleAttributeName: textStyle
                 ]
-                text.drawInRect(NSOffsetRect(rect, 0, -10), withAttributes: textFontAttributes)
+                text.draw(in: NSOffsetRect(rect, 0, -10), withAttributes: textFontAttributes)
                 
             }
             else if e.type == TYPE_STORE
@@ -911,34 +927,34 @@ class DrawingView: NSView{
                 let p3:NSPoint = NSMakePoint(rect.origin.x,                     rect.origin.y)
                 let p4:NSPoint = NSMakePoint(rect.origin.x + rect.size.width,   rect.origin.y )
                 
-                path.moveToPoint(p1)
-                path.lineToPoint(p2)
-                path.moveToPoint(p3)
-                path.lineToPoint(p4)
+                path.move(to: p1)
+                path.line(to: p2)
+                path.move(to: p3)
+                path.line(to: p4)
                 
                 path.stroke()
                 
                 // ------ draw text between the two bars ------
                 // let text: NSString = e.name + " \(e.number)"//+ e.description
                 // build a long string with linebreaks
-                let text: NSString = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
+                let text: String = e.name + String("\n") + String(format:"%d", e.number) + String(format:"(%d)", index) + String("\n") + e.description
                 
                 let font = NSFont(name: "Menlo", size: 10.0)
                 
-                let textStyle = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
-                textStyle.alignment = NSTextAlignment.Center
+                let textStyle = NSMutableParagraphStyle.default().mutableCopy() as! NSMutableParagraphStyle
+                textStyle.alignment = NSTextAlignment.center
                 textStyle.lineHeightMultiple = 1.2
-                textStyle.lineBreakMode = .ByWordWrapping
+                textStyle.lineBreakMode = .byWordWrapping
                 
                 //let textColor = NSColor(calibratedRed: 0.147, green: 0.222, blue: 0.162, alpha: 1.0)
-                let textColor = NSColor.blueColor()
+                let textColor = NSColor.blue
                 
                 let textFontAttributes = [
                     NSFontAttributeName : font!,
                     NSForegroundColorAttributeName: textColor,
                     NSParagraphStyleAttributeName: textStyle
                 ]
-                text.drawInRect(NSOffsetRect(rect, 0, -10), withAttributes: textFontAttributes)
+                text.draw(in: NSOffsetRect(rect, 0, -10), withAttributes: textFontAttributes)
                 
             }
             else if e.type == TYPE_STATE
@@ -957,8 +973,8 @@ class DrawingView: NSView{
                 //let p3:NSPoint = NSMakePoint(rect.origin.x,                     rect.origin.y)
                 let p4:NSPoint = NSMakePoint(rect.origin.x,   rect.origin.y )
                 
-                path.moveToPoint(p2)
-                path.lineToPoint(p4)
+                path.move(to: p2)
+                path.line(to: p4)
                 
                 path.stroke()
                 
@@ -980,7 +996,7 @@ class DrawingView: NSView{
                                   width: 4*CONNRADIUS,
                                   height:4*CONNRADIUS)
                 
-                path.appendBezierPathWithOvalInRect(rect)
+                path.appendOval(in: rect)
                 
                 path.stroke()
                 
@@ -994,13 +1010,13 @@ class DrawingView: NSView{
                 
                 for c in e.connectionPoints
                 {
-                    NSColor.blueColor().set()
+                    NSColor.blue.set()
                     let dotRect = NSRect(x: e.location.x + c.x - CONNRADIUS,
                                          y: e.location.y + c.y - CONNRADIUS,
                                          width: 2*CONNRADIUS,
                                          height: 2*CONNRADIUS)
                     
-                    apath.appendBezierPathWithOvalInRect(dotRect)
+                    apath.appendOval(in: dotRect)
                     apath.lineWidth = 1
                     apath.stroke()
                 }
@@ -1107,9 +1123,9 @@ class DrawingView: NSView{
     ///
     /// TBD: don't allow selected_element_index and selected_connector_index to be set at the same time
     ///
-    func testSelectElementInRect(point:NSPoint) -> Bool{
+    func testSelectElementInRect(_ point:NSPoint) -> Bool{
         
-        for (index,e) in Pages[0].Elements.enumerate(){
+        for (index,e) in Pages[0].Elements.enumerated(){
             let aRect = NSRect(x: e.location.x - RADIUS,
                                y: e.location.y - RADIUS,
                                width: 2*RADIUS,
@@ -1126,14 +1142,14 @@ class DrawingView: NSView{
             
         }
         // security reset selected element
-        selected_element_index == -1
+        selected_element_index = -1
         return false
     }
     
     /// testControlPointSelected - tests if a control point was selected by a click
     /// - parameter point: point where clicked
     /// - returns: True or False
-    func testControlPointSelected(point:NSPoint) -> Bool{
+    func testControlPointSelected(_ point:NSPoint) -> Bool{
         
         // security check
         if (selected_connector_index == -1)
@@ -1176,7 +1192,7 @@ class DrawingView: NSView{
     /// testSelectConnectorInRect - tests if a connector was selected by a click
     /// - parameter point: point where clicked
     /// - returns: True or False
-    func testSelectConnectorInRect(point:NSPoint) -> Bool{
+    func testSelectConnectorInRect(_ point:NSPoint) -> Bool{
         
         var startPoint_number:Int
         var startPoint_connectionPoint:Int
@@ -1187,7 +1203,7 @@ class DrawingView: NSView{
         
         // test if any connector is selected
         // enumerate over all connectors
-        for (index,c) in Pages[0].Connections.enumerate(){
+        for (index,c) in Pages[0].Connections.enumerated(){
             
             startPoint_number = c.startPoint_number
             startPoint_connectionPoint = c.startPoint_connectionPoint
@@ -1227,7 +1243,7 @@ class DrawingView: NSView{
             }
         }
         // security reset selected connector
-        selected_connector_index == -1
+        selected_connector_index = -1
         return false
     }
 
@@ -1235,13 +1251,13 @@ class DrawingView: NSView{
     /// testPointInConnector - tests if a point is within a connectorpoint
     /// - parameter point: point where clicked
     /// - returns: True or False
-    func testPointInConnector(point:NSPoint) -> Bool{
+    func testPointInConnector(_ point:NSPoint) -> Bool{
         
         // enumerate over all elements
-        for (index,e) in Pages[0].Elements.enumerate(){
+        for (index,e) in Pages[0].Elements.enumerated(){
             
             // iterate over all connectionPoints
-            for (cindex,cp) in e.connectionPoints.enumerate(){
+            for (cindex,cp) in e.connectionPoints.enumerated(){
                 
                 // rect around a connectionPoint            // TBD: possibly add e.location.x and e.location.y
                 let aRect = NSRect(x: e.location.x + cp.x - CONNRADIUS,
@@ -1303,21 +1319,21 @@ class DrawingView: NSView{
     /// - parameter element_index: index of the element to be deleted
     /// 
     ///
-    func deleteElement(element_index:Int){
+    func deleteElement(_ element_index:Int){
         NSLog("deleteElement element_index=%d",element_index)
-        Pages[0].Elements.removeAtIndex(element_index)
+        Pages[0].Elements.remove(at: element_index)
         
         // search in Connectors for in/out connections with the actual element
         // see http://stackoverflow.com/questions/28323848/removing-from-array-during-enumeration-in-swift
-        for (index,c) in Pages[0].Connections.enumerate().reverse(){
+        for (index,c) in Pages[0].Connections.enumerated().reversed(){
             if c.startPoint_number == element_index || c.endPoint_number == element_index{
-                Pages[0].Connections.removeAtIndex(index)
+                Pages[0].Connections.remove(at: index)
                 Pages[0].number_connections -= 1  // ???
             }
         }
         
         // correct references to the elements where the connections are made
-        for (index,c) in Pages[0].Connections.enumerate()
+        for (index,c) in Pages[0].Connections.enumerated()
         {
             if c.startPoint_number > element_index
             {
@@ -1338,15 +1354,15 @@ class DrawingView: NSView{
     /// TBD: if the connector is selected and the Bubble that is source or target of the connector
     ///      it crashes, as the connector is already removed (by the bubble remove) when trying to delete the connector ...
     ///
-    func deleteConnector(connector_index:Int){
+    func deleteConnector(_ connector_index:Int){
         NSLog("deleteConnector connector_index=%d",connector_index)
-        Pages[0].Connections.removeAtIndex(connector_index)
+        Pages[0].Connections.remove(at: connector_index)
         //
         Pages[0].number_connections -= 1  // ???
     }
     
-    override func mouseDown(theEvent: NSEvent) {
-        super.mouseDown(theEvent)
+    override func mouseDown(with theEvent: NSEvent) {
+        super.mouseDown(with: theEvent)
         //
         NSLog("mouseDown")
         
@@ -1354,19 +1370,19 @@ class DrawingView: NSView{
         let modifierFlags = theEvent.modifierFlags;
         //if (modifierFlags.contains(.ControlKeyMask))
         //if (modifierFlags.contains(.AlternateKeyMask))
-        if (modifierFlags.contains(.CommandKeyMask))
+        if (modifierFlags.contains(.command))
         {
-            if let menu = self.menuForEvent(theEvent)
+            if let menu = self.menu(for: theEvent)
             {
-                NSMenu.popUpContextMenu(menu, withEvent:theEvent, forView:self);
+                NSMenu.popUpContextMenu(menu, with:theEvent, for:self);
             }
         }
 
         
         var mousePointInView = theEvent.locationInWindow
-        mousePointInView = convertPoint(mousePointInView, fromView: nil)
-        mousePointInView.x -= frame.origin.x
-        mousePointInView.y -= frame.origin.y
+        mousePointInView = convert(mousePointInView, from: nil)
+       //  mousePointInView.x -= frame.origin.x
+       //  mousePointInView.y -= frame.origin.y
         
         NSLog("with selectedTool = %d",selectedTool)
         
@@ -1479,7 +1495,7 @@ class DrawingView: NSView{
     
     // see http://younata.github.io/2015/08/14/osx-programming-programmatic-menu-buttons/
     
-    override func menuForEvent(event: NSEvent) -> NSMenu? {
+    override func menu(for event: NSEvent) -> NSMenu? {
         
         let menu = NSMenu(title: "Context Menu")
         
@@ -1488,30 +1504,30 @@ class DrawingView: NSView{
         menu.addItem(menuItem)
         
         menu.addItem(NSMenuItem(title: "Context1", action: #selector(DrawingView.context1(_:)), keyEquivalent: ""))
-        menu.addItem(NSMenuItem.separatorItem())
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Context2", action: #selector(DrawingView.context2(_:)), keyEquivalent: "e"))
         
         return menu
     }
     
-    func didSelectMenuItem(menuItem: NSMenuItem) {
+    func didSelectMenuItem(_ menuItem: NSMenuItem) {
         NSLog("Selected menu item \(menuItem)")
     }
-    func context1(menuItem: NSMenuItem) {
+    func context1(_ menuItem: NSMenuItem) {
         NSLog("Context1 selected menu item \(menuItem)")
     }
-    func context2(menuItem: NSMenuItem) {
+    func context2(_ menuItem: NSMenuItem) {
         NSLog("Context2 selected menu item \(menuItem)")
     }
 
     
-    override func mouseDragged(theEvent: NSEvent) {
-        super.mouseDragged(theEvent)
+    override func mouseDragged(with theEvent: NSEvent) {
+        super.mouseDragged(with: theEvent)
         
         var mousePointInView = theEvent.locationInWindow
-        mousePointInView = convertPoint(mousePointInView, fromView: nil)
-        mousePointInView.x -= frame.origin.x
-        mousePointInView.y -= frame.origin.y
+        mousePointInView = convert(mousePointInView, from: nil)
+        // mousePointInView.x -= frame.origin.x
+        // mousePointInView.y -= frame.origin.y
         //
         
         NSLog("mouseDragged")
@@ -1558,14 +1574,14 @@ class DrawingView: NSView{
 
 
 
-    override func mouseUp(theEvent: NSEvent) {
+    override func mouseUp(with theEvent: NSEvent) {
         
         NSLog("mouseUp")
         // ---
         var mousePointInView = theEvent.locationInWindow
-        mousePointInView = convertPoint(mousePointInView, fromView: nil)
-        mousePointInView.x -= frame.origin.x
-        mousePointInView.y -= frame.origin.y
+        mousePointInView = convert(mousePointInView, from: nil)
+        // mousePointInView.x -= frame.origin.x
+        // mousePointInView.y -= frame.origin.y
         
         // slet snapPointInView:NSPoint    = self.snapToGrid(mousePointInView)
         

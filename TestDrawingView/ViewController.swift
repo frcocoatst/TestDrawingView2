@@ -51,11 +51,11 @@ class ViewController: NSViewController {
         textOutlet.stringValue = "tbd"
         
         // select the first item of the popup
-        popUpOutlet.selectItemAtIndex(0)
+        popUpOutlet.selectItem(at: 0)
         
     }
     
-    override var representedObject: AnyObject? {
+    override var representedObject: Any? {
         didSet {
             // Update the view, if already loaded.
         }
@@ -66,7 +66,7 @@ class ViewController: NSViewController {
     }
     
     
-    @IBAction func deleteButtonPressed(sender: AnyObject) {
+    @IBAction func deleteButtonPressed(_ sender: AnyObject) {
         
         NSLog("deleteButtonPressed pressed");
         // call method in DrawingView
@@ -74,7 +74,7 @@ class ViewController: NSViewController {
         
     }
     
-    @IBAction func buttonPressed(sender: NSButton) {
+    @IBAction func buttonPressed(_ sender: NSButton) {
         currentOnStateButton.state = NSOffState
         
         for aButton in buttonList()
@@ -97,17 +97,17 @@ class ViewController: NSViewController {
     // ------------ NSTextField -----------
     
     
-    @IBAction func textEnteredAction(sender: NSTextField)
+    @IBAction func textEnteredAction(_ sender: NSTextField)
     {
         let enteredText = sender.stringValue
         
         NSLog("textEnteredAction = %@",enteredText)
-        self.viewOutlet.setBubbleOrConnectorName(enteredText)
+        self.viewOutlet.setBubbleOrConnectorName(enteredText as NSString)
     }
     
     // ------------ NSPopUp -------------
     
-    @IBAction func scaleAction(sender: AnyObject) {
+    @IBAction func scaleAction(_ sender: AnyObject) {
         
         // possible:
         //let popItem:NSPopUpButton = sender as! NSPopUpButton

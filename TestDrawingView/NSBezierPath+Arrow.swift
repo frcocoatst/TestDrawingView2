@@ -25,7 +25,7 @@ extension NSBezierPath {
     /// - parameter headWidth:  head width
     /// - parameter headLength: head length
     ///
-    class func getAxisAlignedArrowPoints(inout points: Array<NSPoint>,
+    class func getAxisAlignedArrowPoints(_ points: inout Array<NSPoint>,
                                                forLength: CGFloat,
                                                tailWidth: CGFloat,
                                                headWidth: CGFloat,
@@ -51,7 +51,7 @@ extension NSBezierPath {
     /// - parameter headWidth:      head width
     /// - parameter headLength:     head length
     /// - returns: an NSBezierPath
-    class func curveFromPointtoPointWithcontrolPoints(startPoint:NSPoint,
+    class func curveFromPointtoPointWithcontrolPoints(_ startPoint:NSPoint,
                                                       endPoint: NSPoint,
                                                       controlPoint1: NSPoint,
                                                       controlPoint2: NSPoint,
@@ -66,7 +66,7 @@ extension NSBezierPath {
         
         let path:NSBezierPath = NSBezierPath()
         
-        NSColor.blueColor().set()
+        NSColor.blue.set()
         
         // Arrow length
         let length:CGFloat = CGFloat(hypotf(Float(endPoint.x - controlPoint2.x), Float(endPoint.y - controlPoint2.y)))
@@ -90,20 +90,20 @@ extension NSBezierPath {
         self.getAxisAlignedArrowPoints(&points, forLength: 0, tailWidth: tailWidth, headWidth: headWidth, headLength: headLength)
         
         // create a path with the arrow
-        path.moveToPoint(points[0])
+        path.move(to: points[0])
         
         for i in 0..<kArrowPointCount{
-            path.lineToPoint(points[i])
+            path.line(to: points[i])
         }
         
         // apply the transformation
-        path.transformUsingAffineTransform(tr)
+        path.transform(using: tr as AffineTransform)
         // path.closePath() // only frame is shown
         path.fill()
         
         // make the curve
-        path.moveToPoint(startPoint)
-        path.curveToPoint(endPoint, controlPoint1: controlPoint1, controlPoint2: controlPoint2)
+        path.move(to: startPoint)
+        path.curve(to: endPoint, controlPoint1: controlPoint1, controlPoint2: controlPoint2)
         
         return path
         
@@ -120,7 +120,7 @@ extension NSBezierPath {
     /// - parameter headLength:     head length
     /// - returns: an NSBezierPath
     
-    class func curveWithArrow(startPoint:NSPoint,
+    class func curveWithArrow(_ startPoint:NSPoint,
                               endPoint:NSPoint,
                               controlPoint1:NSPoint,
                               controlPoint2:NSPoint,
@@ -139,7 +139,7 @@ extension NSBezierPath {
         
         let path = NSBezierPath()
         
-        NSColor.blueColor().set()
+        NSColor.blue.set()
         
         // linie zeichnen
         // path.moveToPoint(controlPoint2)
@@ -180,19 +180,19 @@ extension NSBezierPath {
         // dreieck malen
         let triangle = NSBezierPath()
         
-        triangle.moveToPoint(endPoint)
-        triangle.lineToPoint(pe1)
-        triangle.lineToPoint(pe2)
-        triangle.lineToPoint(endPoint)
+        triangle.move(to: endPoint)
+        triangle.line(to: pe1)
+        triangle.line(to: pe2)
+        triangle.line(to: endPoint)
         //triangle.closePath()
         triangle.fill()
         
-        path.appendBezierPath(triangle)
+        path.append(triangle)
         
         // make the curve
         // path.lineWidth = tailWidth // funktioniert hier nicht ???
-        path.moveToPoint(startPoint)
-        path.curveToPoint(endPoint, controlPoint1: controlPoint1, controlPoint2: controlPoint2)
+        path.move(to: startPoint)
+        path.curve(to: endPoint, controlPoint1: controlPoint1, controlPoint2: controlPoint2)
         
         return path
     }

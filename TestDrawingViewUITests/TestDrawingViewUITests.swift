@@ -34,14 +34,14 @@ class TestDrawingViewUITests: XCTestCase {
         
         
         let window = XCUIApplication().windows["Window"]
-        let checkBox = window.childrenMatchingType(.CheckBox).elementBoundByIndex(1)
+        let checkBox = window.children(matching: .checkBox).element(boundBy: 1)
         checkBox.click()
         
-        let scrollView = window.childrenMatchingType(.ScrollView).element
+        let scrollView = window.children(matching: .scrollView).element
         scrollView.click()
         scrollView.click()
         
-        let checkBox2 = window.childrenMatchingType(.CheckBox).elementBoundByIndex(4)
+        let checkBox2 = window.children(matching: .checkBox).element(boundBy: 4)
         checkBox2.click()
         scrollView.click()
         scrollView.click()
@@ -53,7 +53,7 @@ class TestDrawingViewUITests: XCTestCase {
         scrollView.click()
         scrollView.click()
         
-        let checkBox3 = window.childrenMatchingType(.CheckBox).elementBoundByIndex(0)
+        let checkBox3 = window.children(matching: .checkBox).element(boundBy: 0)
         checkBox3.click()
         checkBox.click()
         checkBox3.click()
@@ -61,7 +61,7 @@ class TestDrawingViewUITests: XCTestCase {
         scrollView.click()
         scrollView.click()
         scrollView.click()
-        window.childrenMatchingType(.Button).elementBoundByIndex(0).click()
+        window.children(matching: .button).element(boundBy: 0).click()
         checkBox2.click()
         scrollView.click()
         scrollView.click()

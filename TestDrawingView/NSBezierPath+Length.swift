@@ -13,37 +13,37 @@ extension NSBezierPath {
     
     var lenght:Double {
         get{
-            let flattenedPath =  self.bezierPathByFlatteningPath
+            let flattenedPath =  self.flattened
             let segments = flattenedPath.elementCount
             var lastPoint:NSPoint = NSZeroPoint
             var point:NSPoint = NSZeroPoint
             var size :Double = 0
             
             for i in 0...segments - 1 {
-                let e:NSBezierPathElement = flattenedPath.elementAtIndex(i, associatedPoints: &point)
+                let e:NSBezierPathElement = flattenedPath.element(at: i, associatedPoints: &point)
                 
                 let currPoint = NSStringFromPoint(point)
                 
                 switch (e){
-                case .MoveToBezierPathElement:
+                case .moveToBezierPathElement:
                     NSLog("MoveToBezierPathElement %d %@", i, currPoint)
                     break
                     
-                case .LineToBezierPathElement:
+                case .lineToBezierPathElement:
                     NSLog("LineToBezierPathElement %d %@", i, currPoint)
                     break
                     
-                case .CurveToBezierPathElement:
+                case .curveToBezierPathElement:
                     NSLog("CurveToBezierPathElement %d %@", i, currPoint)
                     break
                     
-                case .ClosePathBezierPathElement:
+                case .closePathBezierPathElement:
                     NSLog("ClosePathBezierPathElement %d %@", i, currPoint)
                     break
                 }
                 /*
                 */
-                if e == .MoveToBezierPathElement {
+                if e == .moveToBezierPathElement {
                     lastPoint = point
                 } else {
                     let distance:Double = sqrt(pow(Double(point.x - lastPoint.x) , 2) + pow(Double(point.y - lastPoint.y) , 2))
